@@ -1,0 +1,378 @@
+﻿using System.Text;
+using System.Diagnostics; 
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
+using System.Windows.Media.Media3D;
+
+namespace Surprise_Attack_test
+{
+    public class MapRenderer
+    {
+
+        public WriteableBitmap writeableBitmap;
+        public TerrainMap terrainMap;
+        Image mapImage;
+
+        public MapRenderer(Image mapImage)
+        {
+            terrainMap = new TerrainMap();
+            this.mapImage = mapImage;
+            InitializeMap(mapImage);
+            terrainMap.InitiateFlatMap();
+            DrawTerrain(false);
+        }
+        public void InitializeMap(Image MapImage)
+        {
+            this.writeableBitmap = new WriteableBitmap(TerrainMap.MAP_WIDTH, TerrainMap.MAP_LENGTH, 96, 96, PixelFormats.Bgra32, null);
+            MapImage.Source = writeableBitmap;
+
+        }
+        public void DrawTerrain(bool showRestricted)
+        {
+            if (showRestricted)
+            {
+                Algorithms.ViewShedGlobal(this.terrainMap);
+            }
+
+
+            int width = TerrainMap.MAP_WIDTH;
+            int length = TerrainMap.MAP_LENGTH;
+            // Array to hold all pixles, each pixles holds 4 sells [Blue, Green, Red, Alpha]
+            byte[] pixels = new byte[length * width * 4];
+            byte[] BGR_Pixel = new byte[3]; // [blue, green, red]
+
+            PositionInfo currPos;
+
+            for (int y = 0; y < length; y++)
+            {
+                for (int x = 0; x < width; x++)
+                {
+                    int pixelIndex = (y * width + x) * 4;
+
+
+                    currPos = this.terrainMap.terrainHeightsMap[y, x];
+                    BGR_Pixel = GetColorByPos(currPos, showRestricted);
+                    DrawPixel(pixels, pixelIndex, BGR_Pixel[0], BGR_Pixel[1], BGR_Pixel[2]);
+
+                }
+
+            }
+
+
+
+            writeableBitmap.WritePixels(
+                new Int32Rect(0, 0, width, length), // האזור לעדכון
+                pixels,                             // מערך המידע
+                width * 4,                          // ה-Stride (רוחב שורה בבייטים)
+                0);                                 // היסט (Offset)
+        }
+     
+        public void DrawPixel(byte[] pixles, int index, byte blue, byte green, byte red)
+        {
+
+            pixles[index] = blue;
+            pixles[index + 1] = green;
+            pixles[index + 2] = red;
+            pixles[index + 3] = 255;
+
+
+
+        }
+        public void ClearMap()
+        {
+            int width = TerrainMap.MAP_WIDTH;
+            int length = TerrainMap.MAP_LENGTH;
+            byte[] pixels = new byte[length * width * 4];
+            this.terrainMap.InitiateFlatMap();
+            DrawTerrain(false);
+
+        }
+        public byte[] GetColorByPos(PositionInfo pos, bool showRestricted)
+        {
+            // BGR Order: [Blue, Green, Red]
+            byte blue = 0;
+            byte green = 0;
+            byte red = 0;
+            byte[] BGR = new byte[3];
+
+            int h = (int)pos.height;
+
+
+         
+
+            switch (pos.typeOfTerrain)
+            {
+                case TerrainMap.GRASS:
+                    blue = 34;
+                    green = 139; // Forest Green
+                    red = 34;
+                    break;
+
+                case TerrainMap.MOUNTAIN:
+
+                    // 1. Snow Cap Logic: If the mountain is very high, make it white
+                    if (h > 230)
+                    {
+                        blue = 255; green = 255; red = 255; // White
+                    }
+                    else
+                    {
+                        // 2. Brown Gradient Logic
+                        // Brown is made by Red > Green > Blue.
+                        // We use the height 'h' to control brightness.
+
+                        // Red component is the strongest in brown
+                        red = (byte)h;
+
+                        // Green is usually about half of Red for brown
+                        green = (byte)(h / 2);
+
+                        // Blue is very low for brown
+                        blue = (byte)(h / 10);
+
+                        // This creates a gradient:
+                        // Height 50  -> Dark Brown (5, 25, 50)
+                        // Height 200 -> Light Brown/Orange (20, 100, 200)
+                    }
+                    break;
+                case TerrainMap.CAMERA:
+                    red = 255;
+                    green = 255;
+                    blue = 0;
+                    break;
+
+                default:
+                    // Default to Black for errors
+                    blue = 0; green = 0; red = 0;
+                    break;
+            }
+            if (showRestricted && !pos.isSafe && pos.typeOfTerrain != TerrainMap.CAMERA)
+            {
+                red = 255;
+                green = (byte)(h / 3);
+                blue = (byte)(h / 3);
+            }
+            if (pos.isStartingPos)
+            {
+                blue = 200;
+                green = (byte)(h / 3);
+                red = (byte)(h / 3);
+
+            }
+
+            BGR[0] = blue;
+            BGR[1] = green;
+            BGR[2] = red;
+
+            return BGR;
+        }
+
+    }
+
+    public partial class MainWindow : Window
+    {
+        public const int NOTHING = 0;
+        public const int ADD_MOUNTAIN = 1;
+        public const int ADD_CAMERA = 2;
+        public const int DELETE_CAMERA = 3;
+        public const int START_POS = 4;
+        MapRenderer mapRenderer;
+        int action;
+       
+        bool showRestricted;
+        int mountainHeigth;
+        int mountainRadius;
+
+        public MainWindow()
+        {
+            InitializeComponent();
+            MountainInputOverlay.Visibility = Visibility.Collapsed;
+            this.mountainHeigth = 0;
+            this.mountainRadius = 0;
+            this.action = NOTHING;
+            this.showRestricted = false;
+           
+
+            this.mapRenderer = new MapRenderer(MapImage);
+           
+
+            
+           
+
+        }
+        private void RestrictedArea_Checked(object sender, EventArgs e)
+        {
+            this.showRestricted = true;
+            this.mapRenderer.DrawTerrain(this.showRestricted);
+
+
+        }
+        private void RestrictedArea_Unchecked(object sender, EventArgs e)
+        { 
+            this.showRestricted = false;
+            this.mapRenderer.DrawTerrain(this.showRestricted);
+
+
+        }
+        private void DeleteCamera_Click(object sender, EventArgs e)
+        {
+            this.action = DELETE_CAMERA;
+            DisableAllButtons();
+        }
+        private void AddCamera_Click(Object sender, EventArgs e)
+        {
+            if (this.mapRenderer.terrainMap.currNumCameras >= TerrainMap.MAX_CAMERA_NUM)
+                MessageBox.Show("Reached maximum number of cameras!!!");
+            else
+            {
+                this.action = ADD_CAMERA;
+                DisableAllButtons();
+            }
+        }
+        private void ClearMap_Click(Object sender, RoutedEventArgs e)
+        {
+            this.mapRenderer.ClearMap();
+
+        }
+        private void StartPos_Click(Object sender, EventArgs e)
+        {
+            this.action = START_POS;
+            DisableAllButtons();
+        }
+        private void UpdateValue_Slider(Object sender, RoutedEventArgs e)
+        {
+            AntCount_Label.Content = $"Ant Count: {AntCount_Slider.Value:F0}";
+            
+        }
+        private void MapImage_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            Point clickPoint = e.GetPosition(MapImage);
+
+            if (this.mapRenderer.writeableBitmap == null)
+                return;
+
+            double scaleX = this.mapRenderer.writeableBitmap.PixelWidth / MapImage.ActualWidth;
+            double scaleY = this.mapRenderer.writeableBitmap.PixelHeight / MapImage.ActualHeight;
+
+            int mapX = (int)(clickPoint.X * scaleX);
+            int mapY = (int)(clickPoint.Y * scaleY);
+            if(this.mapRenderer.terrainMap.InBounds(mapY, mapX))
+            {
+                switch (this.action)
+                {
+                    case ADD_CAMERA:
+                        this.mapRenderer.terrainMap.AddCamera(mapY, mapX);
+                        this.mapRenderer.DrawTerrain(this.showRestricted);
+                        EnableAllButtons();
+                        this.action = NOTHING;
+                        break;
+                    case ADD_MOUNTAIN:
+                        this.mapRenderer.terrainMap.AddCircleMountainAtPos(this.mountainHeigth, mapY, mapX, this.mountainRadius);
+                        this.mapRenderer.DrawTerrain(this.showRestricted);
+                        EnableAllButtons();
+                        this.action = NOTHING;
+                        break;
+                    case DELETE_CAMERA:
+                        
+                        Camera camToDelete = this.mapRenderer.terrainMap.terrainHeightsMap[mapY, mapX].cam;
+                        if (camToDelete != null)
+                        {
+                            this.mapRenderer.terrainMap.DeleteCamera(camToDelete);
+                            this.mapRenderer.DrawTerrain(this.showRestricted);
+                        }
+                        EnableAllButtons();
+                        this.action = NOTHING;
+                        break;
+                    case START_POS:
+                        if (!this.mapRenderer.terrainMap.terrainHeightsMap[mapY, mapX].isSafe)
+                            MessageBox.Show("Starting position must be a safe area!");
+                        else
+                        {
+                            if (this.mapRenderer.terrainMap.startPos != null)
+                            {
+                                this.mapRenderer.terrainMap.terrainHeightsMap[this.mapRenderer.terrainMap.startPos.yCord, this.mapRenderer.terrainMap.startPos.xCord].isStartingPos = false;
+                            }
+                                        
+                            this.mapRenderer.terrainMap.terrainHeightsMap[mapY, mapX].isStartingPos = true;
+                            this.mapRenderer.terrainMap.startPos = this.mapRenderer.terrainMap.terrainHeightsMap[mapY, mapX];
+                            this.mapRenderer.DrawTerrain(this.showRestricted);
+
+                        }
+
+                        EnableAllButtons();
+                        this.action = NOTHING;
+                        break;
+
+                    default:
+                        break;
+
+                }
+            }
+           
+            
+        }
+        private void AddMountain_Click(Object sender, RoutedEventArgs e)
+        {
+            this.action = ADD_MOUNTAIN;
+            MountainInputOverlay.Visibility = Visibility.Visible;
+            txtOverlayHeight.Text = "";
+            txtOverlayRadius.Text = "";
+            DisableAllButtons();
+           
+        }
+        private void OverlayCancel_Click(Object sender, RoutedEventArgs e)
+        {
+            MountainInputOverlay.Visibility= Visibility.Collapsed;
+            EnableAllButtons();
+            this.action= NOTHING;
+        }
+        private void OverlayConfirm_Click(Object sender, RoutedEventArgs e)
+        {
+            if (int.TryParse(txtOverlayRadius.Text, out int radius) && int.TryParse(txtOverlayHeight.Text, out int height))
+            {
+                if (height < 256)
+                {
+                    MountainInputOverlay.Visibility = Visibility.Collapsed;
+                    this.mountainRadius = radius;
+                    this.mountainHeigth = height;
+                }
+                else
+                {
+                    MessageBox.Show("Height must be under 256");
+                }
+                
+            }
+            else
+            {
+                MessageBox.Show("Please enter valid whole numbers.");
+            }
+        }
+        private void DisableAllButtons()
+        {
+            AddCamera_Button.IsEnabled = false;
+            AddMountain_Button.IsEnabled = false;         
+            ClearMap_Button.IsEnabled = false;
+            chkShowRestricted.IsEnabled = false;
+            DeleteCamera_Button.IsEnabled = false;
+            StartPos_Button.IsEnabled = false;
+        }
+        private void EnableAllButtons()
+        {
+            AddCamera_Button.IsEnabled = true;
+            AddMountain_Button.IsEnabled = true;            
+            ClearMap_Button.IsEnabled = true;
+            chkShowRestricted.IsEnabled = true;
+            DeleteCamera_Button.IsEnabled = true;
+            StartPos_Button.IsEnabled = true;
+        }
+       
+    }
+    
+}
