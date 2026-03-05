@@ -53,6 +53,19 @@ namespace Surprise_Attack_test
             this.currNumCameras++;
 
         }
+        public void AddCamera(Camera newCam)
+        {
+            int row = newCam.row;
+            int col = newCam.col;
+            this.cameraList[this.currNumCameras] = newCam;
+            this.terrainHeightsMap[row, col].lastType = this.terrainHeightsMap[row, col].typeOfTerrain;
+            this.terrainHeightsMap[row, col].typeOfTerrain = CAMERA;
+            this.terrainHeightsMap[row, col].isSafe = false;
+            this.terrainHeightsMap[row, col].cam = newCam;
+
+            this.currNumCameras++;
+
+        }
         public void DeleteCamera(Camera camera)
         {
             Camera[] newCameraList = new Camera[MAX_CAMERA_NUM];
@@ -133,6 +146,29 @@ namespace Surprise_Attack_test
 
 
         }
+        public bool CheckNewCamAllowed(int camY, int camX)
+        {
+            // return true if new cam position allowed, false otherwise
+            Camera newCam = new Camera(camY, camX);
+            AddCamera(newCam);
+
+            if (this.startPos == null)
+                return true;
+            
+
+            Algorithms.ViewshedSingleCam(newCam, this);
+            if (!this.startPos.isSafe)
+            {
+                DeleteCamera(newCam);
+                Algorithms.ViewShedGlobal(this);
+                return false;
+            }
+
+            return true;
+
+
+
+        }
         private void CallOtherDirections(int mountainMaxHight, int centerRowPos, int centerColPos, int radius)
         {
           
@@ -146,7 +182,7 @@ namespace Surprise_Attack_test
             AddCircleMountainAtPos(mountainMaxHight - MOUNTAIN_DEC, centerRowPos - 1, centerColPos, radius - 1);
 
         }
-
+        
 
 
 

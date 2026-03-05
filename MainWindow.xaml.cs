@@ -36,10 +36,10 @@ namespace Surprise_Attack_test
         }
         public void DrawTerrain(bool showRestricted)
         {
-            if (showRestricted)
-            {
-                Algorithms.ViewShedGlobal(this.terrainMap);
-            }
+            
+            
+            Algorithms.ViewShedGlobal(this.terrainMap);
+            
 
 
             int width = TerrainMap.MAP_WIDTH;
@@ -268,10 +268,17 @@ namespace Surprise_Attack_test
                 switch (this.action)
                 {
                     case ADD_CAMERA:
-                        this.mapRenderer.terrainMap.AddCamera(mapY, mapX);
-                        this.mapRenderer.DrawTerrain(this.showRestricted);
+
+                        if (this.mapRenderer.terrainMap.CheckNewCamAllowed(mapY, mapX))
+                        {                            
+                            this.mapRenderer.DrawTerrain(this.showRestricted);
+                        }
+                        else
+                            MessageBox.Show("New camera position is not allowed, too close to starting position");
+                        
                         EnableAllButtons();
                         this.action = NOTHING;
+                        
                         break;
                     case ADD_MOUNTAIN:
                         this.mapRenderer.terrainMap.AddCircleMountainAtPos(this.mountainHeigth, mapY, mapX, this.mountainRadius);

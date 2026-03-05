@@ -45,7 +45,7 @@ namespace Surprise_Attack_test
         // This function calculates a viewshed Map for a single camera
         // Returns the map from before but with the added calculation of this camera
         // *** need to find the optimal algorithm for this problem
-        private static TerrainMap ViewshedSingleCam(Camera camera, TerrainMap map)
+        public static TerrainMap ViewshedSingleCam(Camera camera, TerrainMap map)
         {
             int camHeight = map.terrainHeightsMap[camera.row, camera.col].height;
 
