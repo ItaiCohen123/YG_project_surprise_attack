@@ -33,7 +33,7 @@
             <Button Name="AddMountain_Button" Content="Add Mountain" Margin="20,20" Height="40" Click="AddMountain_Click"/>
             <Button Name="ClearMap_Button" Content="Clear Map" Margin="20,20" Height="40" Click="ClearMap_Click"/>
             <Button Name="StartPos_Button" Content="Choose Starting Position" Margin="20,20" Height="40" Click="StartPos_Click"/>
-            <Button Name="StartSimulation_Button" Content="Start Simulation" Margin="20,20" Height="40" IsEnabled="False"/>
+            <Button Name="StartSimulation_Button" Content="Start Simulation" Margin="20,20" Height="40" IsEnabled="False" Click="StartSimulation_Click"/>
 
         </StackPanel>
 

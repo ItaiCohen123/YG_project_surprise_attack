@@ -13,6 +13,25 @@ namespace Surprise_Attack_test
     internal class ProjectObjects
     {
     }
+    public class TerrainGraph
+    {
+        public Dictionary<PositionInfo, List<Edge>> terrainGraph;
+        public double penaltyValue;
+
+        public TerrainGraph(TerrainMap map, double penaltyValue)
+        {
+            this.penaltyValue = penaltyValue;
+            this.terrainGraph = new Dictionary<PositionInfo, List<Edge>>();
+            BuildGraph(map);
+
+        }
+        private void BuildGraph(TerrainMap map)
+        {
+
+        } // need to implement
+
+
+    }
     public class TerrainMap
     {
         public const int GRASS = 0;
@@ -245,7 +264,24 @@ namespace Surprise_Attack_test
 
 
     }
-    
+    public class Edge
+    {
+        public PositionInfo target;
+        public double weight;
+        public double pheromone;
+
+        public const double INITIAL_PHEROMONE = 1; // PLACE HOLDER!!!
+
+        public Edge(PositionInfo target, double weight)
+        {
+            this.target = target;
+            this.weight = weight;
+            this.pheromone = INITIAL_PHEROMONE;
+        }
+        
+
+    }
+
     public class Ant {
     
     

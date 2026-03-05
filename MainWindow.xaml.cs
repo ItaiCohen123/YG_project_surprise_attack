@@ -18,6 +18,7 @@ namespace Surprise_Attack_test
 
         public WriteableBitmap writeableBitmap;
         public TerrainMap terrainMap;
+        public TerrainGraph terrainGraph;
         Image mapImage;
 
         public MapRenderer(Image mapImage)
@@ -333,6 +334,10 @@ namespace Surprise_Attack_test
             txtOverlayRadius.Text = "";
             DisableAllButtons();
            
+        }
+        private void StartSimulation_Click(Object sender, RoutedEventArgs e)
+        {
+
         }
         private void OverlayCancel_Click(Object sender, RoutedEventArgs e)
         {
