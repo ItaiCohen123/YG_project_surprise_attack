@@ -180,10 +180,10 @@ namespace Surprise_Attack_test
 
             return BGR;
         }
-        public int[] ConvertMapImagePointToCords(Point mapImagePoint, Image MapImage)
+        public (int yCord, int xCord) ConvertMapImagePointToCords(Point mapImagePoint, Image MapImage)
         {
-            if (this.writeableBitmap == null)
-                return null;
+            if (this.writeableBitmap == null || MapImage == null || MapImage.ActualWidth == 0 || MapImage.ActualHeight == 0)
+                return (-1, -1);
 
             double scaleX = this.writeableBitmap.PixelWidth / MapImage.ActualWidth;
             double scaleY = this.writeableBitmap.PixelHeight / MapImage.ActualHeight;
@@ -191,14 +191,25 @@ namespace Surprise_Attack_test
             int mapX = (int)(mapImagePoint.X * scaleX);
             int mapY = (int)(mapImagePoint.Y * scaleY);
 
-            int[] result = {mapY, mapX};
+            
+
+            return (mapY, mapX);
+        }
+
+        public Point ConvertCordsToMapImagePoint(int mapY, int mapX, Image MapImage)
+        {
+            if (this.writeableBitmap == null || MapImage == null || MapImage.ActualWidth == 0 || MapImage.ActualHeight == 0)
+                return new Point(0, 0);
+
+            Point result = new Point();
+            double scaleX = this.writeableBitmap.PixelWidth / MapImage.ActualWidth;
+            double scaleY = this.writeableBitmap.PixelHeight / MapImage.ActualHeight;
+
+            result.X = mapX / scaleX;
+            result.Y = mapY / scaleY;
 
             return result;
         }
-     /*   public Point ConvertCordsToMapImagePoint(int mapY,  int mapX, Image MapImage)
-        {
-
-        }*/
 
     }
 
@@ -289,15 +300,10 @@ namespace Surprise_Attack_test
         private void MapImage_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             Point clickPoint = e.GetPosition(MapImage);
-            int[] cords;
-            cords = this.mapRenderer.ConvertMapImagePointToCords(clickPoint, MapImage);
-
-            if (cords == null)
-                return;
-
-            int mapY = cords[0];
-            int mapX = cords[1];
-            
+            int mapY; 
+            int mapX;
+            (mapY, mapX) = this.mapRenderer.ConvertMapImagePointToCords(clickPoint, MapImage);
+                  
             if(this.mapRenderer.terrainMap.InBounds(mapY, mapX))
             {
                 switch (this.action)
