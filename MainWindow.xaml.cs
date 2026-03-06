@@ -180,6 +180,25 @@ namespace Surprise_Attack_test
 
             return BGR;
         }
+        public int[] ConvertMapImagePointToCords(Point mapImagePoint, Image MapImage)
+        {
+            if (this.writeableBitmap == null)
+                return null;
+
+            double scaleX = this.writeableBitmap.PixelWidth / MapImage.ActualWidth;
+            double scaleY = this.writeableBitmap.PixelHeight / MapImage.ActualHeight;
+
+            int mapX = (int)(mapImagePoint.X * scaleX);
+            int mapY = (int)(mapImagePoint.Y * scaleY);
+
+            int[] result = {mapY, mapX};
+
+            return result;
+        }
+     /*   public Point ConvertCordsToMapImagePoint(int mapY,  int mapX, Image MapImage)
+        {
+
+        }*/
 
     }
 
@@ -249,6 +268,7 @@ namespace Surprise_Attack_test
         private void ClearMap_Click(Object sender, RoutedEventArgs e)
         {
             this.mapRenderer.ClearMap();
+            StartSimulation_Button.IsEnabled = false;
 
         }
         private void StartPos_Click(Object sender, EventArgs e)
@@ -269,15 +289,15 @@ namespace Surprise_Attack_test
         private void MapImage_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             Point clickPoint = e.GetPosition(MapImage);
+            int[] cords;
+            cords = this.mapRenderer.ConvertMapImagePointToCords(clickPoint, MapImage);
 
-            if (this.mapRenderer.writeableBitmap == null)
+            if (cords == null)
                 return;
 
-            double scaleX = this.mapRenderer.writeableBitmap.PixelWidth / MapImage.ActualWidth;
-            double scaleY = this.mapRenderer.writeableBitmap.PixelHeight / MapImage.ActualHeight;
-
-            int mapX = (int)(clickPoint.X * scaleX);
-            int mapY = (int)(clickPoint.Y * scaleY);
+            int mapY = cords[0];
+            int mapX = cords[1];
+            
             if(this.mapRenderer.terrainMap.InBounds(mapY, mapX))
             {
                 switch (this.action)
@@ -336,7 +356,6 @@ namespace Surprise_Attack_test
                         EnableAllButtons();
                         this.action = NOTHING;
                         break;
-
                     case TARGET_POS:
                         if (!this.mapRenderer.terrainMap.terrainHeightsMap[mapY, mapX].isSafe)
                             MessageBox.Show("Target position must be a safe area!");
@@ -359,7 +378,6 @@ namespace Surprise_Attack_test
                         EnableAllButtons();
                         this.action = NOTHING;
                         break;
-
                     default:
                         break;
 
@@ -372,8 +390,8 @@ namespace Surprise_Attack_test
         {
             this.action = ADD_MOUNTAIN;
             MountainInputOverlay.Visibility = Visibility.Visible;
-            txtOverlayHeight.Text = "";
-            txtOverlayRadius.Text = "";
+            txtOverlayHeight.Text = "230";
+            txtOverlayRadius.Text = "6";
             DisableAllButtons();
            
         }
