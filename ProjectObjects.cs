@@ -29,8 +29,8 @@ namespace Surprise_Attack_test
             int rows = TerrainMap.MAP_LENGTH;
             int cols = TerrainMap.MAP_WIDTH;
             PositionInfo currPos;
-            PositionInfo targetPos;
-            Edge currEdge;
+            
+            
 
             for(int row = 0; row < rows; row++)
             {
@@ -39,8 +39,7 @@ namespace Surprise_Attack_test
                     currPos = map.terrainHeightsMap[row, col];
                     this.terrainGraph.Add(currPos, new List<Edge>());
 
-                    targetPos = map.terrainHeightsMap[row + 1, col + 1];
-                    currEdge = new Edge(targetPos, currPos, CalculateWeight(targetPos, currPos, map));
+                    AddAllEdges(currPos, map);
 
 
 
@@ -50,14 +49,49 @@ namespace Surprise_Attack_test
 
 
 
-        } // need to implement
+        } 
+        private void AddAllEdges(PositionInfo from, TerrainMap map)
+        {
+            Edge currEdge;
+            PositionInfo targetPos;
+            int currRow = from.yCord;
+            int currCol = from.xCord;
+            int[,] possiblePos ={ 
+                { currRow + 1, currCol + 1 },
+                { currRow + 1, currCol - 1 },
+                { currRow - 1, currCol + 1 },
+                { currRow - 1, currCol - 1 },
+                { currRow + 1, currCol },
+                { currRow - 1, currCol },
+                { currRow, currCol + 1 },
+                { currRow, currCol - 1 } };
+
+            for(int pos = 0; pos < possiblePos.GetLength(0); pos++) 
+            {
+                int row = possiblePos[pos, 0];
+                int col = possiblePos[pos, 1];
+                if (map.InBounds(row, col))
+                {
+                    targetPos = map.terrainHeightsMap[row, col];
+                    currEdge = new Edge(targetPos, from, CalculateWeight(targetPos, from));
+                    this.terrainGraph[from].Add(currEdge);
+
+
+                }
+            }
+
+
+
+        }
         private double CalculateWeight(PositionInfo to, PositionInfo from)
         {
             int heightTo = to.height;
             int heightFrom = from.height;
             int penaltyCheck = to.isSafe ? 0 : 1;
 
-            return (heightTo - heightFrom) * (1 + PENALTY_VALUE * penaltyCheck);
+            double distance = Math.Pow(heightTo - heightFrom, 2); // Square the distance so there will not be negative distance
+
+            return distance * (1 + PENALTY_VALUE * penaltyCheck); 
 
         }
 
@@ -306,7 +340,7 @@ namespace Surprise_Attack_test
         public double weight;
         public double pheromone;
 
-        public const double INITIAL_PHEROMONE = 1; // PLACE HOLDER!!!
+        public const double INITIAL_PHEROMONE = 0.5; // PLACE HOLDER!!!
 
         public Edge(PositionInfo target,PositionInfo from, double weight)
         {
