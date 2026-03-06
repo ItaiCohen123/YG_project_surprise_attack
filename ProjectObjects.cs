@@ -16,11 +16,13 @@ namespace Surprise_Attack_test
     public class TerrainGraph
     {
         public Dictionary<PositionInfo, List<Edge>> terrainGraph;
+        public List<Edge> allEdges;
         public const double PENALTY_VALUE = 1000; // place holder!!!
 
         public TerrainGraph(TerrainMap map)
         {            
             this.terrainGraph = new Dictionary<PositionInfo, List<Edge>>();
+            this.allEdges = new List<Edge>();
             BuildGraph(map);
 
         }
@@ -72,6 +74,7 @@ namespace Surprise_Attack_test
                         targetPos = map.terrainHeightsMap[row, col];
                         currEdge = new Edge(targetPos, from, CalculateWeight(targetPos, from));
                         this.terrainGraph[from].Add(currEdge);
+                        this.allEdges.Add(currEdge);
 
 
                     }
@@ -358,8 +361,63 @@ namespace Surprise_Attack_test
     }
 
     public class Ant {
+
+
+        public const double PHEROMONE_COEFFICIENT = 10000; // Not the final value
+        public const double PHEROMONE_EVAPORATION_VALUE = 0.9; // Not the final value
+
+        public PositionInfo currentPosition;
+        public bool hadReachedTarget;
+        public List<Edge> edgesVisited;
+        public double distanceCovered;
+
+
+        public Ant(PositionInfo startPos)
+        {
+            this.currentPosition = startPos;
+            this.hadReachedTarget = false;
+            this.edgesVisited = new List<Edge>();
+            this.distanceCovered = 0;
+        }
+        // Adds an edge the the route of the ant, also considers the weight of the edge and adds it to the total distance covered
+        public void AddEdgeToRoute(Edge edge)
+        {
+
+            this.edgesVisited.Add(edge);
+            this.distanceCovered += edge.weight;
+
+
+        }
+        // Iterates through the entire edge route an ant that reached the target took
+        // and adds pheromones according the quality of the route.
+        public void UpdatePheromone()
+        {
+           
+            double pheromoneIncrease = PHEROMONE_COEFFICIENT / this.distanceCovered;
+
+            foreach(Edge edge in edgesVisited)
+            {
+                edge.pheromone += pheromoneIncrease;
+            }
+
+
+        }
+
+        // Iterates through all the edges in the graph and decreases the pheromone value by a constant.
+        // should be called after each generation
+        public static void EvaporatePheromone(TerrainGraph graph)
+        {
+
+            foreach(Edge edge in graph.allEdges)
+            {
+                edge.pheromone *= PHEROMONE_EVAPORATION_VALUE;
+            }
+
+
+
+        }
+
     
     
-    
-    } // Continue later, also consider a different name for class. Probably have properties: x, y, hasReachedTarget and more...
+    } 
 }
