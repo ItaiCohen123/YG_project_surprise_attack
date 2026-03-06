@@ -167,6 +167,12 @@ namespace Surprise_Attack_test
                 red = (byte)(h / 3);
 
             }
+            else if(pos.isTargetPos)
+            {
+                red = 220;
+                green = (byte)(h / 3);
+                blue = 200;
+            }
 
             BGR[0] = blue;
             BGR[1] = green;
@@ -184,6 +190,7 @@ namespace Surprise_Attack_test
         public const int ADD_CAMERA = 2;
         public const int DELETE_CAMERA = 3;
         public const int START_POS = 4;
+        public const int TARGET_POS = 5;
         MapRenderer mapRenderer;
         int action;
        
@@ -247,6 +254,11 @@ namespace Surprise_Attack_test
             this.action = START_POS;
             DisableAllButtons();
         }
+        private void TargetPos_Click(Object sender, EventArgs e)
+        {
+            this.action = TARGET_POS;
+            DisableAllButtons();
+        }
         private void UpdateValue_Slider(Object sender, RoutedEventArgs e)
         {
             AntCount_Label.Content = $"Ant Count: {AntCount_Slider.Value:F0}";
@@ -275,7 +287,7 @@ namespace Surprise_Attack_test
                             this.mapRenderer.DrawTerrain(this.showRestricted);
                         }
                         else
-                            MessageBox.Show("New camera position is not allowed, too close to starting position");
+                            MessageBox.Show("New camera position is not allowed, too close to starting/target position");
                         
                         EnableAllButtons();
                         this.action = NOTHING;
@@ -317,6 +329,25 @@ namespace Surprise_Attack_test
                         EnableAllButtons();
                         this.action = NOTHING;
                         break;
+                    case TARGET_POS:
+                        if (!this.mapRenderer.terrainMap.terrainHeightsMap[mapY, mapX].isSafe)
+                            MessageBox.Show("Target position must be a safe area!");
+                        else
+                        {
+                            if (this.mapRenderer.terrainMap.targetPos != null)
+                            {
+                                this.mapRenderer.terrainMap.terrainHeightsMap[this.mapRenderer.terrainMap.targetPos.yCord, this.mapRenderer.terrainMap.targetPos.xCord].isTargetPos = false;
+                            }
+
+                            this.mapRenderer.terrainMap.terrainHeightsMap[mapY, mapX].isTargetPos = true;
+                            this.mapRenderer.terrainMap.targetPos = this.mapRenderer.terrainMap.terrainHeightsMap[mapY, mapX];
+                            this.mapRenderer.DrawTerrain(this.showRestricted);
+
+                        }
+
+                        EnableAllButtons();
+                        this.action = NOTHING;
+                        break;
 
                     default:
                         break;
@@ -337,6 +368,14 @@ namespace Surprise_Attack_test
         }
         private void StartSimulation_Click(Object sender, RoutedEventArgs e)
         {
+            // open new window and start algorithm, only available after both starting position and ending position is decided.
+            DisableAllButtons();
+            
+
+            // builds graph from the terrain height map
+            this.mapRenderer.terrainGraph = new TerrainGraph(this.mapRenderer.terrainMap); 
+
+            // run the ACO algorithm!
 
         }
         private void OverlayCancel_Click(Object sender, RoutedEventArgs e)
@@ -374,6 +413,8 @@ namespace Surprise_Attack_test
             chkShowRestricted.IsEnabled = false;
             DeleteCamera_Button.IsEnabled = false;
             StartPos_Button.IsEnabled = false;
+            TargetPos_Button.IsEnabled = false;
+            StartSimulation_Button.IsEnabled = false;
         }
         private void EnableAllButtons()
         {
@@ -383,6 +424,7 @@ namespace Surprise_Attack_test
             chkShowRestricted.IsEnabled = true;
             DeleteCamera_Button.IsEnabled = true;
             StartPos_Button.IsEnabled = true;
+            TargetPos_Button.IsEnabled = true;
         }
        
     }

@@ -16,11 +16,10 @@ namespace Surprise_Attack_test
     public class TerrainGraph
     {
         public Dictionary<PositionInfo, List<Edge>> terrainGraph;
-        public double penaltyValue;
+        public const double PENALTY_VALUE = 1000; // place holder!!!
 
-        public TerrainGraph(TerrainMap map, double penaltyValue)
-        {
-            this.penaltyValue = penaltyValue;
+        public TerrainGraph(TerrainMap map)
+        {            
             this.terrainGraph = new Dictionary<PositionInfo, List<Edge>>();
             BuildGraph(map);
 
@@ -49,7 +48,8 @@ namespace Surprise_Attack_test
         public Camera[] cameraList;
         public int currNumCameras;
         public PositionInfo startPos;
-        
+        public PositionInfo targetPos;
+
 
         public TerrainMap()
         {
@@ -58,6 +58,7 @@ namespace Surprise_Attack_test
             this.cameraList = new Camera[MAX_CAMERA_NUM];
             this.currNumCameras = 0;
             this.startPos = null;
+            this.targetPos = null;
 
         }
         public void AddCamera(int row, int col)
@@ -112,6 +113,7 @@ namespace Surprise_Attack_test
         public void InitiateFlatMap()
         {
             this.startPos = null;
+            this.targetPos = null;
             this.currNumCameras = 0;
             for (int row = 0; row < this.terrainHeightsMap.GetLength(0); row++)
             {
@@ -171,12 +173,11 @@ namespace Surprise_Attack_test
             Camera newCam = new Camera(camY, camX);
             AddCamera(newCam);
 
-            if (this.startPos == null)
-                return true;
+
             
 
             Algorithms.ViewshedSingleCam(newCam, this);
-            if (!this.startPos.isSafe)
+            if ((this.startPos != null && !this.startPos.isSafe) || (this.targetPos != null && !this.targetPos.isSafe))
             {
                 DeleteCamera(newCam);
                 Algorithms.ViewShedGlobal(this);
@@ -217,6 +218,7 @@ namespace Surprise_Attack_test
         public int lastType;
         public bool isSafe;
         public bool isStartingPos;
+        public bool isTargetPos;
         public Camera cam;
 
         public PositionInfo(int y, int x, int height)
@@ -228,6 +230,7 @@ namespace Surprise_Attack_test
             this.lastType = TerrainMap.GRASS;
             this.isSafe = true;
             this.isStartingPos = false;
+            this.isTargetPos = false;
             this.cam = null;
         }
 
