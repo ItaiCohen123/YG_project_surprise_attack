@@ -26,8 +26,40 @@ namespace Surprise_Attack_test
         }
         private void BuildGraph(TerrainMap map)
         {
+            int rows = TerrainMap.MAP_LENGTH;
+            int cols = TerrainMap.MAP_WIDTH;
+            PositionInfo currPos;
+            PositionInfo targetPos;
+            Edge currEdge;
+
+            for(int row = 0; row < rows; row++)
+            {
+                for(int col = 0; col < cols; col++)
+                {
+                    currPos = map.terrainHeightsMap[row, col];
+                    this.terrainGraph.Add(currPos, new List<Edge>());
+
+                    targetPos = map.terrainHeightsMap[row + 1, col + 1];
+                    currEdge = new Edge(targetPos, currPos, CalculateWeight(targetPos, currPos, map));
+
+
+
+                }
+            }
+
+
+
 
         } // need to implement
+        private double CalculateWeight(PositionInfo to, PositionInfo from)
+        {
+            int heightTo = to.height;
+            int heightFrom = from.height;
+            int penaltyCheck = to.isSafe ? 0 : 1;
+
+            return (heightTo - heightFrom) * (1 + PENALTY_VALUE * penaltyCheck);
+
+        }
 
 
     }
@@ -270,14 +302,16 @@ namespace Surprise_Attack_test
     public class Edge
     {
         public PositionInfo target;
+        public PositionInfo from;
         public double weight;
         public double pheromone;
 
         public const double INITIAL_PHEROMONE = 1; // PLACE HOLDER!!!
 
-        public Edge(PositionInfo target, double weight)
+        public Edge(PositionInfo target,PositionInfo from, double weight)
         {
             this.target = target;
+            this.from = from;
             this.weight = weight;
             this.pheromone = INITIAL_PHEROMONE;
         }
