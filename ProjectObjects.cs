@@ -56,27 +56,25 @@ namespace Surprise_Attack_test
             PositionInfo targetPos;
             int currRow = from.yCord;
             int currCol = from.xCord;
-            int[,] possiblePos ={ 
-                { currRow + 1, currCol + 1 },
-                { currRow + 1, currCol - 1 },
-                { currRow - 1, currCol + 1 },
-                { currRow - 1, currCol - 1 },
-                { currRow + 1, currCol },
-                { currRow - 1, currCol },
-                { currRow, currCol + 1 },
-                { currRow, currCol - 1 } };
+          
 
-            for(int pos = 0; pos < possiblePos.GetLength(0); pos++) 
+            for(int diffRow = -1; diffRow <= 1; diffRow++) 
             {
-                int row = possiblePos[pos, 0];
-                int col = possiblePos[pos, 1];
-                if (map.InBounds(row, col))
+                for (int diffCol = -1; diffCol <= 1; diffCol++)
                 {
-                    targetPos = map.terrainHeightsMap[row, col];
-                    currEdge = new Edge(targetPos, from, CalculateWeight(targetPos, from));
-                    this.terrainGraph[from].Add(currEdge);
+                    if (diffCol == 0 && diffRow == 0)
+                        continue;
+
+                    int row = currRow + diffRow;
+                    int col = currCol + diffCol;
+                    if (map.InBounds(row, col))
+                    {
+                        targetPos = map.terrainHeightsMap[row, col];
+                        currEdge = new Edge(targetPos, from, CalculateWeight(targetPos, from));
+                        this.terrainGraph[from].Add(currEdge);
 
 
+                    }
                 }
             }
 
@@ -89,7 +87,13 @@ namespace Surprise_Attack_test
             int heightFrom = from.height;
             int penaltyCheck = to.isSafe ? 0 : 1;
 
-            double distance = Math.Pow(heightTo - heightFrom, 2); // Square the distance so there will not be negative distance
+            // pythagorean theorem to calculate distance a^2 + b^2 = c^2
+            // horizontalDist ^ 2 + verticalDist ^ 2 = distance ^ 2
+            double horizontalDistanceSQ = 1; // 1 ^ 2 = 1
+            double verticalDistanceSQ = Math.Pow(heightTo - heightFrom, 2); // Square the distance so there will not be negative distance;
+
+
+            double distance = Math.Sqrt(horizontalDistanceSQ +  verticalDistanceSQ);
 
             return distance * (1 + PENALTY_VALUE * penaltyCheck); 
 

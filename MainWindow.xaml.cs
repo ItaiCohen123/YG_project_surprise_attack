@@ -193,6 +193,8 @@ namespace Surprise_Attack_test
         public const int TARGET_POS = 5;
         MapRenderer mapRenderer;
         int action;
+        bool startPosDecided = false;
+        bool targetPosDecided = false;
        
         bool showRestricted;
         int mountainHeigth;
@@ -323,12 +325,18 @@ namespace Surprise_Attack_test
                             this.mapRenderer.terrainMap.terrainHeightsMap[mapY, mapX].isStartingPos = true;
                             this.mapRenderer.terrainMap.startPos = this.mapRenderer.terrainMap.terrainHeightsMap[mapY, mapX];
                             this.mapRenderer.DrawTerrain(this.showRestricted);
+                            this.startPosDecided = true;
+
+
+                            if (this.targetPosDecided)
+                                StartSimulation_Button.IsEnabled = true;
 
                         }
 
                         EnableAllButtons();
                         this.action = NOTHING;
                         break;
+
                     case TARGET_POS:
                         if (!this.mapRenderer.terrainMap.terrainHeightsMap[mapY, mapX].isSafe)
                             MessageBox.Show("Target position must be a safe area!");
@@ -342,7 +350,10 @@ namespace Surprise_Attack_test
                             this.mapRenderer.terrainMap.terrainHeightsMap[mapY, mapX].isTargetPos = true;
                             this.mapRenderer.terrainMap.targetPos = this.mapRenderer.terrainMap.terrainHeightsMap[mapY, mapX];
                             this.mapRenderer.DrawTerrain(this.showRestricted);
+                            this.targetPosDecided = true;
 
+                            if(this.startPosDecided)
+                                StartSimulation_Button.IsEnabled = true;
                         }
 
                         EnableAllButtons();
@@ -370,6 +381,7 @@ namespace Surprise_Attack_test
         {
             // open new window and start algorithm, only available after both starting position and ending position is decided.
             DisableAllButtons();
+            StartSimulation_Button.IsEnabled = false;
             
 
             // builds graph from the terrain height map
@@ -414,7 +426,7 @@ namespace Surprise_Attack_test
             DeleteCamera_Button.IsEnabled = false;
             StartPos_Button.IsEnabled = false;
             TargetPos_Button.IsEnabled = false;
-            StartSimulation_Button.IsEnabled = false;
+            
         }
         private void EnableAllButtons()
         {
