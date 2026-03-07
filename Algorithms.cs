@@ -79,29 +79,12 @@ namespace Surprise_Attack_test
             }
 
 
+            PrintStats(totalDist);
 
-            Console.WriteLine($"Generation {Algorithms.genCount} sum distance: {totalDist}");
-            if (totalDist < bestGenDist)
-            {
-                bestGenDist = totalDist;
-                bestGen = genCount;
-            }
-            else if (totalDist > worstGenDist)
-            {
-                worstGenDist = totalDist;
-                worstGen = genCount;
-            }
-
-
-
-            Algorithms.genCount++;
-            Algorithms.distances.Add(totalDist);
 
             return generationAnts;
 
         }
-
-
         private static Edge CalculateNextMove(Ant ant, TerrainGraph graph)
         {
             double totalHeuristic = CalculateTotalPheromone(ant, graph)/CalculateTotalWeight(ant, graph);
@@ -158,7 +141,27 @@ namespace Surprise_Attack_test
 
             return totalWeight;
         }
+        private static void PrintStats(double totalDist)
+        {
 
+            Console.WriteLine($"Generation {Algorithms.genCount} sum distance: {totalDist}");
+            if (totalDist < bestGenDist)
+            {
+                bestGenDist = totalDist;
+                bestGen = genCount;
+            }
+            else if (totalDist > worstGenDist)
+            {
+                worstGenDist = totalDist;
+                worstGen = genCount;
+            }
+
+
+
+            Algorithms.genCount++;
+            Algorithms.distances.Add(totalDist);
+
+        }
         // This function implements the Viewshed algorithm
         // Calculate for each camera, which positions it can see and generate a boolean array
         // with [x,y] = true --> position x, y is not safe
