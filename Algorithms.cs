@@ -47,7 +47,6 @@ namespace Surprise_Attack_test
                         ant.hadReachedTarget = true;
                     }
                 }
-
                 ant.UpdatePheromone();
             }
 

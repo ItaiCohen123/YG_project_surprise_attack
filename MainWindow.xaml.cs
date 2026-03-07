@@ -280,6 +280,8 @@ namespace Surprise_Attack_test
         {
             this.mapRenderer.ClearMap();
             StartSimulation_Button.IsEnabled = false;
+            this.startPosDecided = false;
+            this.targetPosDecided = false;
 
         }
         private void StartPos_Click(Object sender, EventArgs e)
@@ -341,6 +343,8 @@ namespace Surprise_Attack_test
                     case START_POS:
                         if (!this.mapRenderer.terrainMap.terrainHeightsMap[mapY, mapX].isSafe)
                             MessageBox.Show("Starting position must be a safe area!");
+                        else if (this.mapRenderer.terrainMap.terrainHeightsMap[mapY, mapX].isTargetPos)
+                            MessageBox.Show("Starting position must be different from target position!");
                         else
                         {
                             if (this.mapRenderer.terrainMap.startPos != null)
@@ -365,6 +369,8 @@ namespace Surprise_Attack_test
                     case TARGET_POS:
                         if (!this.mapRenderer.terrainMap.terrainHeightsMap[mapY, mapX].isSafe)
                             MessageBox.Show("Target position must be a safe area!");
+                        else if(this.mapRenderer.terrainMap.terrainHeightsMap[mapY, mapX].isStartingPos)
+                            MessageBox.Show("Target position must be different from starting position!");
                         else
                         {
                             if (this.mapRenderer.terrainMap.targetPos != null)
@@ -410,9 +416,18 @@ namespace Surprise_Attack_test
 
             // builds graph from the terrain height map
             this.mapRenderer.terrainGraph = new TerrainGraph(this.mapRenderer.terrainMap); 
+            RunGeneration_Button.IsEnabled = true;
+         
 
+        }
+        private void RunGeneration_Click(Object sender, RoutedEventArgs e)
+        {
+            RunGeneration_Button.IsEnabled = false;
             // run the ACO algorithm!
 
+            int antCountPerGeneration = (int)AntCount_Slider.Value;
+            Algorithms.RunGenerationACO(antCountPerGeneration, this.mapRenderer.terrainGraph, this.mapRenderer.terrainMap.startPos, this.mapRenderer.terrainMap.targetPos);
+            RunGeneration_Button.IsEnabled = true;
         }
         private void OverlayCancel_Click(Object sender, RoutedEventArgs e)
         {
