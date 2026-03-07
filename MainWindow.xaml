@@ -26,7 +26,7 @@
 
             <Label Content="Settings" FontSize="20" HorizontalAlignment="Center" Margin="0,10,0,0"/>
             <Label Content="Ant Count: " FontSize="15" HorizontalAlignment="Left" Margin="20,20,10,0" Name="AntCount_Label"/>
-            <Slider Name="AntCount_Slider" Minimum="10" Maximum="1000" Value="100" Margin="20,0" ValueChanged="UpdateValue_Slider"/>
+            <Slider Name="AntCount_Slider" Minimum="5" Maximum="100" Value="15" Margin="20,0" ValueChanged="UpdateValue_Slider"/>
             <CheckBox x:Name="chkShowRestricted"  Content="Show Restricted Areas" FontSize="14" Margin="20,10" Checked="RestrictedArea_Checked" Unchecked="RestrictedArea_Unchecked"/>
             <Button Name="AddCamera_Button" Content="Add Camera" Margin="20,20" Height="40" Click="AddCamera_Click"/>
             <Button Name="DeleteCamera_Button" Content="Delete Camera" Margin="20,20" Height="40" Click="DeleteCamera_Click"/>

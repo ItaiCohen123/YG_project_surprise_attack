@@ -21,6 +21,48 @@ namespace Surprise_Attack_test
 
 
 
+
+        public static void RunGenerationACO(int antCount, TerrainGraph graph, PositionInfo startPos, PositionInfo targetPos)
+        {
+            List<Ant> generationAnts = new List<Ant>();
+
+            for(int i = 0; i < antCount; i++)
+            {
+                Ant currAnt = new Ant(startPos);
+                generationAnts.Add(currAnt);
+
+
+            }
+
+            foreach(Ant ant in generationAnts)
+            {
+                while (!ant.hadReachedTarget)
+                {
+                    Edge nextPos = CalculateNextMove(ant);
+                    ant.currentPosition = nextPos.target;
+                    ant.AddEdgeToRoute(nextPos);
+
+                    if(ant.currentPosition == targetPos)
+                    {
+                        ant.hadReachedTarget = true;
+                    }
+                }
+
+                ant.UpdatePheromone();
+            }
+
+
+
+
+
+        }
+
+        // Need to implement
+        private static Edge CalculateNextMove(Ant ant)
+        {
+            return null
+        }
+
         // This function implements the Viewshed algorithm
         // Calculate for each camera, which positions it can see and generate a boolean array
         // with [x,y] = true --> position x, y is not safe
