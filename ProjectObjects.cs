@@ -17,7 +17,7 @@ namespace Surprise_Attack_test
     {
         public Dictionary<PositionInfo, List<Edge>> terrainGraph;
         public List<Edge> allEdges;
-        public const double PENALTY_VALUE = 6000; // place holder!!!
+        public const double PENALTY_VALUE = 60000; // place holder!!!
         public const double DISTANCE_ADJACENT = 10;
 
         public TerrainGraph(TerrainMap map)
@@ -364,9 +364,9 @@ namespace Surprise_Attack_test
     public class Ant {
 
 
-        public const double PHEROMONE_COEFFICIENT = 10000; // Not the final value
-        public const double PHEROMONE_EVAPORATION_VALUE = 0.75; // Not the final value
-        public const int ANT_COUNT_GEN = 10;
+        public const double PHEROMONE_COEFFICIENT = 50000; // Not the final value
+        public const double PHEROMONE_EVAPORATION_VALUE = 0.85; // Not the final value
+        public const int ANT_COUNT_GEN = 13;
 
         public PositionInfo currentPosition;
         public bool hadReachedTarget;

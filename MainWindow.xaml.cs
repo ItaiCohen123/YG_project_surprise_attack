@@ -75,7 +75,7 @@ namespace Surprise_Attack_test
                 0);                                 // היסט (Offset)
         }
         
-        public void DrawPhermones(List<Edge> route)
+        public void DrawPhermones(List<Edge> route, bool isWhite)
         {
 
 
@@ -95,7 +95,7 @@ namespace Surprise_Attack_test
 
                     int y = edge.from.yCord;
                     int x = edge.from.xCord;
-                    byte[] color = GetColorByPheromone(edge.pheromone);
+                    byte[] color = GetColorByPheromone(edge.pheromone, isWhite);
 
                   //  Calculate the exact memory address of this pixel
                     int pixelOffset = (y * width + x) * 4;
@@ -218,8 +218,18 @@ namespace Surprise_Attack_test
 
             return BGR;
         }
-        public byte[] GetColorByPheromone(double pheromone)
+        public byte[] GetColorByPheromone(double pheromone, bool isWhite)
         {
+
+
+            if (isWhite)
+            {
+                return new byte[] { 245, 245, 245, 255};
+
+            }
+
+
+
             // 1. Define the expected minimum and maximum pheromone levels.
             double minPheromone = Edge.INITIAL_PHEROMONE; // 0.5 in your code
             double maxPheromone = 30.0;
@@ -242,6 +252,8 @@ namespace Surprise_Attack_test
             byte alpha = 255;                             // Fully opaque
 
             // Remember: WPF WriteableBitmap uses BGRA order!
+
+           
             return new byte[] { blue, green, red, alpha };
         }
         public (int yCord, int xCord) ConvertMapImagePointToCords(Point mapImagePoint, Image MapImage)
@@ -490,7 +502,7 @@ namespace Surprise_Attack_test
 
                     bestAnt = Ant.BestAnt(genAnts);
 
-                    this.mapRenderer.DrawPhermones(bestAnt.edgesVisited);
+                    this.mapRenderer.DrawPhermones(bestAnt.edgesVisited, false);
 
                     await Task.Delay(750);
 
@@ -512,7 +524,7 @@ namespace Surprise_Attack_test
             this.mapRenderer.DrawTerrain(this.showRestricted);
 
 
-            this.mapRenderer.DrawPhermones(bestAnt.edgesVisited);
+            this.mapRenderer.DrawPhermones(bestAnt.edgesVisited, true);
 
             EnableAllButtons();
             StartSimulation_Button.IsEnabled = true;

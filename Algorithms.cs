@@ -78,6 +78,8 @@ namespace Surprise_Attack_test
                 totalDist += ant.distanceCovered;
             }
 
+        
+
 
             PrintStats(totalDist);
 
@@ -87,7 +89,7 @@ namespace Surprise_Attack_test
         }
         private static Edge CalculateNextMove(Ant ant, TerrainGraph graph)
         {
-            double totalHeuristic = CalculateTotalPheromone(ant, graph)/CalculateTotalWeight(ant, graph);
+            double totalHeuristic = CalculateTotalPheromone(ant, graph)/Math.Sqrt(CalculateTotalWeight(ant, graph));
             double currentHeuristic;
             double probability;
             Edge maxEdge = graph.terrainGraph[ant.currentPosition][0];
