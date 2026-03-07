@@ -369,6 +369,7 @@ namespace Surprise_Attack_test
         public PositionInfo currentPosition;
         public bool hadReachedTarget;
         public List<Edge> edgesVisited;
+        public List<PositionInfo> nodesVisited;
         public double distanceCovered;
 
 
@@ -377,6 +378,7 @@ namespace Surprise_Attack_test
             this.currentPosition = startPos;
             this.hadReachedTarget = false;
             this.edgesVisited = new List<Edge>();
+            this.nodesVisited = new List<PositionInfo>();
             this.distanceCovered = 0;
         }
         // Adds an edge the the route of the ant, also considers the weight of the edge and adds it to the total distance covered
@@ -384,6 +386,7 @@ namespace Surprise_Attack_test
         {
 
             this.edgesVisited.Add(edge);
+            this.nodesVisited.Add(edge.from);
             this.distanceCovered += edge.weight;
 
 

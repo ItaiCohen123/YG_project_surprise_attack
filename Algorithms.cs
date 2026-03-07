@@ -38,7 +38,7 @@ namespace Surprise_Attack_test
             {
                 while (!ant.hadReachedTarget)
                 {
-                    Edge nextPos = CalculateNextMove(ant);
+                    Edge nextPos = CalculateNextMove(ant, graph);
                     ant.currentPosition = nextPos.target;
                     ant.AddEdgeToRoute(nextPos);
 
@@ -57,10 +57,52 @@ namespace Surprise_Attack_test
 
         }
 
-        // Need to implement
-        private static Edge CalculateNextMove(Ant ant)
+        
+        private static Edge CalculateNextMove(Ant ant, TerrainGraph graph)
         {
-            return null
+            double totalHeuristic = CalculateTotalPheromone(ant, graph)/CalculateTotalWeight(ant, graph);
+            double currentHeuristic;
+            double probability;
+            foreach(Edge edge in graph.terrainGraph[ant.currentPosition])
+            {
+                if (!ant.nodesVisited.Contains(edge.target))
+                {
+                    currentHeuristic = edge.pheromone / edge.weight;
+                    probability = currentHeuristic / totalHeuristic;
+
+                    if (ChooseEdge(probability))
+                        return edge;
+                }
+            }
+
+
+            return CalculateNextMove(ant, graph);
+        }
+        private static bool ChooseEdge(double probability)
+        {
+            return true;
+        }
+        private static double CalculateTotalPheromone(Ant ant, TerrainGraph graph)
+        {
+            double totalPheromone = 0;
+
+            foreach(Edge edge in graph.terrainGraph[ant.currentPosition])
+            {
+                totalPheromone += edge.pheromone;
+            }
+
+            return totalPheromone;
+        }
+        private static double CalculateTotalWeight(Ant ant, TerrainGraph graph)
+        {
+            double totalWeight = 0;
+
+            foreach (Edge edge in graph.terrainGraph[ant.currentPosition])
+            {
+                totalWeight += edge.weight;
+            }
+
+            return totalWeight;
         }
 
         // This function implements the Viewshed algorithm
