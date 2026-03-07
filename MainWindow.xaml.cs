@@ -207,9 +207,9 @@ namespace Surprise_Attack_test
             }
             else if(pos.isTargetPos)
             {
-                red = 220;
+                red = 255;
                 green = (byte)(h / 3);
-                blue = 200;
+                blue = 240;
             }
 
             BGR[0] = blue;
@@ -246,7 +246,7 @@ namespace Surprise_Attack_test
             // Low intensity  = {0, 255, 255, 255} (Yellow)
             // High intensity = {0, 0,   255, 255} (Red)
 
-            byte blue = 0;
+            byte blue = 200;
             byte green = (byte)(255 * (1.0 - intensity)); // Green drops to 0 as intensity goes up
             byte red = 255;                               // Red stays maxed out
             byte alpha = 255;                             // Fully opaque
@@ -431,7 +431,10 @@ namespace Surprise_Attack_test
 
 
                             if (this.targetPosDecided)
+                            {
                                 StartSimulation_Button.IsEnabled = true;
+                                FastStartSimulation_Button.IsEnabled = true;
+                            }
 
                         }
 
@@ -455,8 +458,11 @@ namespace Surprise_Attack_test
                             this.mapRenderer.DrawTerrain(this.showRestricted);
                             this.targetPosDecided = true;
 
-                            if(this.startPosDecided)
+                            if (this.startPosDecided)
+                            {
                                 StartSimulation_Button.IsEnabled = true;
+                                FastStartSimulation_Button.IsEnabled = true;
+                            }
                         }
 
                         EnableAllButtons();
@@ -483,6 +489,7 @@ namespace Surprise_Attack_test
         {
             DisableAllButtons();
             StartSimulation_Button.IsEnabled = false;
+            FastStartSimulation_Button.IsEnabled = false;
 
             // builds graph from the terrain height map
             this.mapRenderer.terrainGraph = new TerrainGraph(this.mapRenderer.terrainMap);
@@ -518,6 +525,40 @@ namespace Surprise_Attack_test
             BestAnt_Button.IsEnabled = true;
 
         }
+        private async void FastStartSimulation_Click( object sender, RoutedEventArgs e)
+        {
+            DisableAllButtons();
+            StartSimulation_Button.IsEnabled = false;
+            FastStartSimulation_Button.IsEnabled = false;
+
+            // builds graph from the terrain height map
+            this.mapRenderer.terrainGraph = new TerrainGraph(this.mapRenderer.terrainMap);
+            List<Ant> genAnts;
+            Ant bestAnt;
+
+            if (int.TryParse(GenCountBox.Text, out int genCount))
+            {
+                for (int i = 0; i < genCount; i++)
+                {
+                    GenCount_Label.Content = $"Generation Count: {i + 1}";
+
+                    genAnts = await Task.Run(() =>
+                        Algorithms.RunGenerationACO(Ant.ANT_COUNT_GEN, this.mapRenderer.terrainGraph, this.mapRenderer.terrainMap.startPos, this.mapRenderer.terrainMap.targetPos)
+                    );
+
+                    bestAnt = Ant.BestAnt(genAnts);
+                    Ant.EvaporatePheromone(this.mapRenderer.terrainGraph);
+                }
+            }
+
+            Console.WriteLine($"Worst gen: {Algorithms.worstGen}, distance: {Algorithms.worstGenDist}");
+            Console.WriteLine($"Best gen: {Algorithms.bestGen}, distance: {Algorithms.bestGenDist}");
+            Console.WriteLine($"Difference between best and worst gen: {Algorithms.worstGenDist - Algorithms.bestGenDist}");
+
+
+            BestAnt_Button.IsEnabled = true;
+
+        }
         private void BestAnt_Click(Object sender, RoutedEventArgs e)
         {
             Ant bestAnt = Ant.BestAnt(Algorithms.allAnts);
@@ -528,6 +569,7 @@ namespace Surprise_Attack_test
 
             EnableAllButtons();
             StartSimulation_Button.IsEnabled = true;
+            FastStartSimulation_Button.IsEnabled = true;
             BestAnt_Button.IsEnabled = false;
             Algorithms.ResetParameters();
 

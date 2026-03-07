@@ -213,6 +213,9 @@ namespace Surprise_Attack_test
             this.terrainHeightsMap[centerRowPos, centerColPos].height = mountainMaxHight;
             if(this.terrainHeightsMap[centerRowPos, centerColPos].typeOfTerrain != CAMERA)
                 this.terrainHeightsMap[centerRowPos, centerColPos].typeOfTerrain = MOUNTAIN;
+            else
+                this.terrainHeightsMap[centerRowPos, centerColPos].lastType = MOUNTAIN;
+
 
             CallOtherDirections(mountainMaxHight, centerRowPos, centerColPos, radius);
 
