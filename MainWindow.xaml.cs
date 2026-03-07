@@ -74,7 +74,45 @@ namespace Surprise_Attack_test
                 width * 4,                          // ה-Stride (רוחב שורה בבייטים)
                 0);                                 // היסט (Offset)
         }
-     
+        
+        public void DrawPhermones(List<Edge> route)
+        {
+
+
+            int width = TerrainMap.MAP_WIDTH;
+            
+            
+
+            try
+            {
+               // Lock the bitmap so the UI doesn't try to read it while we update it
+                writeableBitmap.Lock();
+
+                foreach (Edge edge in route)
+                {
+                    if (edge.from == this.terrainMap.startPos)
+                        continue;
+
+                    int y = edge.from.yCord;
+                    int x = edge.from.xCord;
+                    byte[] color = GetColorByPheromone(edge.pheromone);
+
+                  //  Calculate the exact memory address of this pixel
+                    int pixelOffset = (y * width + x) * 4;
+                    IntPtr pixelAddress = writeableBitmap.BackBuffer + pixelOffset;
+
+                    // Write the 4 bytes (B, G, R, A) directly to memory
+                    System.Runtime.InteropServices.Marshal.Copy(color, 0, pixelAddress, 4);
+                }
+
+                // Tell WPF to redraw the entire map once we are done
+                writeableBitmap.AddDirtyRect(new Int32Rect(0, 0, TerrainMap.MAP_WIDTH, TerrainMap.MAP_LENGTH));
+            }
+            finally
+            {
+                writeableBitmap.Unlock();
+            }
+        }
         public void DrawPixel(byte[] pixles, int index, byte blue, byte green, byte red)
         {
 
@@ -179,6 +217,32 @@ namespace Surprise_Attack_test
             BGR[2] = red;
 
             return BGR;
+        }
+        public byte[] GetColorByPheromone(double pheromone)
+        {
+            // 1. Define the expected minimum and maximum pheromone levels.
+            double minPheromone = Edge.INITIAL_PHEROMONE; // 0.5 in your code
+            double maxPheromone = 30.0;
+
+            // 2. Normalize the pheromone value to a scale of 0.0 to 1.0
+            double range = maxPheromone - minPheromone;
+            double intensity = (pheromone - minPheromone) / range;
+
+            // 3. Clamp the intensity to ensure it never goes below 0 or above 1
+            // (Otherwise, multiplying by 255 could crash the byte cast)
+            intensity = Math.Max(0.0, Math.Min(1.0, intensity));
+
+            // 4. Calculate the gradient (Yellow -> Red)
+            // Low intensity  = {0, 255, 255, 255} (Yellow)
+            // High intensity = {0, 0,   255, 255} (Red)
+
+            byte blue = 0;
+            byte green = (byte)(255 * (1.0 - intensity)); // Green drops to 0 as intensity goes up
+            byte red = 255;                               // Red stays maxed out
+            byte alpha = 255;                             // Fully opaque
+
+            // Remember: WPF WriteableBitmap uses BGRA order!
+            return new byte[] { blue, green, red, alpha };
         }
         public (int yCord, int xCord) ConvertMapImagePointToCords(Point mapImagePoint, Image MapImage)
         {
@@ -294,11 +358,7 @@ namespace Surprise_Attack_test
             this.action = TARGET_POS;
             DisableAllButtons();
         }
-        private void UpdateValue_Slider(Object sender, RoutedEventArgs e)
-        {
-            AntCount_Label.Content = $"Ant Count: {AntCount_Slider.Value:F0}";
-            
-        }
+       
         private void MapImage_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             Point clickPoint = e.GetPosition(MapImage);
@@ -407,26 +467,51 @@ namespace Surprise_Attack_test
             DisableAllButtons();
            
         }
-        private void StartSimulation_Click(Object sender, RoutedEventArgs e)
+        private async void StartSimulation_Click(Object sender, RoutedEventArgs e)
         {
-            // open new window and start algorithm, only available after both starting position and ending position is decided.
             DisableAllButtons();
             StartSimulation_Button.IsEnabled = false;
-            
 
             // builds graph from the terrain height map
-            this.mapRenderer.terrainGraph = new TerrainGraph(this.mapRenderer.terrainMap); 
-            RunGeneration_Button.IsEnabled = true;
-         
+            this.mapRenderer.terrainGraph = new TerrainGraph(this.mapRenderer.terrainMap);
+            List<Ant> genAnts;
+            Ant bestAnt;
 
+            if (int.TryParse(GenCountBox.Text, out int genCount))
+            {
+                for (int i = 0; i < genCount; i++)
+                {
+                    this.mapRenderer.DrawTerrain(this.showRestricted);
+
+                    genAnts = await Task.Run(() =>
+                        Algorithms.RunGenerationACO(Ant.ANT_COUNT_GEN, this.mapRenderer.terrainGraph, this.mapRenderer.terrainMap.startPos, this.mapRenderer.terrainMap.targetPos)
+                    );
+
+                    bestAnt = Ant.BestAntInGen(genAnts);
+
+                    this.mapRenderer.DrawPhermones(bestAnt.edgesVisited);
+
+                    await Task.Delay(750);
+
+                    Ant.EvaporatePheromone(this.mapRenderer.terrainGraph);
+                }
+            }
+
+            Console.WriteLine($"Worst gen: {Algorithms.worstGen}, distance: {Algorithms.worstGenDist}");
+            Console.WriteLine($"Best gen: {Algorithms.bestGen}, distance: {Algorithms.bestGenDist}");
+            Console.WriteLine($"Difference between best and worst gen: {Algorithms.worstGenDist - Algorithms.bestGenDist}");
+
+            EnableAllButtons();
+            StartSimulation_Button.IsEnabled = true;
+
+            Algorithms.ResetParameters();
         }
         private void RunGeneration_Click(Object sender, RoutedEventArgs e)
         {
             RunGeneration_Button.IsEnabled = false;
             // run the ACO algorithm!
-
-            int antCountPerGeneration = (int)AntCount_Slider.Value;
-            Algorithms.RunGenerationACO(antCountPerGeneration, this.mapRenderer.terrainGraph, this.mapRenderer.terrainMap.startPos, this.mapRenderer.terrainMap.targetPos);
+            
+            Algorithms.RunGenerationACO(Ant.ANT_COUNT_GEN, this.mapRenderer.terrainGraph, this.mapRenderer.terrainMap.startPos, this.mapRenderer.terrainMap.targetPos);
             Ant.EvaporatePheromone(this.mapRenderer.terrainGraph);
             RunGeneration_Button.IsEnabled = true;
         }
@@ -466,6 +551,7 @@ namespace Surprise_Attack_test
             DeleteCamera_Button.IsEnabled = false;
             StartPos_Button.IsEnabled = false;
             TargetPos_Button.IsEnabled = false;
+            GenCountBox.IsEnabled = false;
             
         }
         private void EnableAllButtons()
@@ -477,6 +563,7 @@ namespace Surprise_Attack_test
             DeleteCamera_Button.IsEnabled = true;
             StartPos_Button.IsEnabled = true;
             TargetPos_Button.IsEnabled = true;
+            GenCountBox.IsEnabled = true;
         }
        
     }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using static System.Runtime.InteropServices.JavaScript.JSType;
@@ -33,13 +34,18 @@ namespace Surprise_Attack_test
         public const int RIGHT_UP = 20;
         public const int RIGHT_DOWN = 30;
         public const int LEFT_DOWN = 40;
+        public static int genCount = 1;
+        public static List<double> distances = new List<double>();
+        public static int bestGen = 0;
+        public static int worstGen = 0;
+        public static double bestGenDist = Double.MaxValue;
+        public static double worstGenDist = 0;
 
 
 
 
-
-
-        public static void RunGenerationACO(int antCount, TerrainGraph graph, PositionInfo startPos, PositionInfo targetPos)
+        
+        public static List<Ant> RunGenerationACO(int antCount, TerrainGraph graph, PositionInfo startPos, PositionInfo targetPos)
         {
             List<Ant> generationAnts = new List<Ant>();
             double totalDist = 0;
@@ -72,8 +78,24 @@ namespace Surprise_Attack_test
 
 
 
-            Console.WriteLine($"Generation sum distance: {totalDist}");
+            Console.WriteLine($"Generation {Algorithms.genCount} sum distance: {totalDist}");
+            if (totalDist < bestGenDist)
+            {
+                bestGenDist = totalDist;
+                bestGen = genCount;
+            }
+            else if (totalDist > worstGenDist)
+            {
+                worstGenDist = totalDist;
+                worstGen = genCount;
+            }
 
+
+
+            Algorithms.genCount++;
+            Algorithms.distances.Add(totalDist);
+
+            return generationAnts;
 
         }
 
@@ -283,10 +305,20 @@ namespace Surprise_Attack_test
 
         }
 
-     
-
-
-
+        public static void ResetParameters()
+        {
+            genCount = 1;
+            distances = new List<double>();
+            bestGen = 0;
+            worstGen = 0;
+            bestGenDist = Double.MaxValue;
+            worstGenDist = 0;
+        }
 
     }
+
+
+
+
 }
+

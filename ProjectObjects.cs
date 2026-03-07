@@ -18,6 +18,7 @@ namespace Surprise_Attack_test
         public Dictionary<PositionInfo, List<Edge>> terrainGraph;
         public List<Edge> allEdges;
         public const double PENALTY_VALUE = 1000; // place holder!!!
+        public const double DISTANCE_ADJACENT = 10;
 
         public TerrainGraph(TerrainMap map)
         {            
@@ -92,7 +93,7 @@ namespace Surprise_Attack_test
 
             // pythagorean theorem to calculate distance a^2 + b^2 = c^2
             // horizontalDist ^ 2 + verticalDist ^ 2 = distance ^ 2
-            double horizontalDistanceSQ = 1; // 1 ^ 2 = 1
+            double horizontalDistanceSQ = Math.Pow(DISTANCE_ADJACENT, 2);
             double verticalDistanceSQ = Math.Pow(heightTo - heightFrom, 2); // Square the distance so there will not be negative distance;
 
 
@@ -364,7 +365,8 @@ namespace Surprise_Attack_test
 
 
         public const double PHEROMONE_COEFFICIENT = 10000; // Not the final value
-        public const double PHEROMONE_EVAPORATION_VALUE = 0.75; // Not the final value
+        public const double PHEROMONE_EVAPORATION_VALUE = 0.7; // Not the final value
+        public const int ANT_COUNT_GEN = 10;
 
         public PositionInfo currentPosition;
         public bool hadReachedTarget;
@@ -419,7 +421,23 @@ namespace Surprise_Attack_test
 
 
         }
+        public static Ant BestAntInGen(List<Ant> ants)
+        {
+            Ant bestAnt = ants[0];
+            double bestDistance = double.MaxValue;
+            foreach (Ant ant in ants)
+            {
+                if(ant.distanceCovered < bestDistance)
+                {
+                    bestDistance = ant.distanceCovered;
+                    bestAnt = ant;
+                }
+            }
 
+            return bestAnt;
+
+
+        }
     
     
     } 
