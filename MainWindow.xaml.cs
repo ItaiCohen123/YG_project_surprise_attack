@@ -427,6 +427,7 @@ namespace Surprise_Attack_test
 
             int antCountPerGeneration = (int)AntCount_Slider.Value;
             Algorithms.RunGenerationACO(antCountPerGeneration, this.mapRenderer.terrainGraph, this.mapRenderer.terrainMap.startPos, this.mapRenderer.terrainMap.targetPos);
+            Ant.EvaporatePheromone(this.mapRenderer.terrainGraph);
             RunGeneration_Button.IsEnabled = true;
         }
         private void OverlayCancel_Click(Object sender, RoutedEventArgs e)

@@ -364,7 +364,7 @@ namespace Surprise_Attack_test
 
 
         public const double PHEROMONE_COEFFICIENT = 10000; // Not the final value
-        public const double PHEROMONE_EVAPORATION_VALUE = 0.9; // Not the final value
+        public const double PHEROMONE_EVAPORATION_VALUE = 0.75; // Not the final value
 
         public PositionInfo currentPosition;
         public bool hadReachedTarget;

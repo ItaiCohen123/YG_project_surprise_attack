@@ -3,9 +3,26 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Surprise_Attack_test
 {
+    public static class ListExtensions
+    {
+        public static void Shuffle<T>(this List<T> list)
+        {
+            Random random = new Random(); // Consider using Random.Shared for thread safety
+            int n = list.Count;
+            while (n > 1)
+            {
+                n--;
+                int k = random.Next(n + 1);
+                T value = list[k];
+                list[k] = list[n];
+                list[n] = value;
+            }
+        }
+    }
     internal class Algorithms
     {
         public const int UP = 1;
@@ -25,6 +42,7 @@ namespace Surprise_Attack_test
         public static void RunGenerationACO(int antCount, TerrainGraph graph, PositionInfo startPos, PositionInfo targetPos)
         {
             List<Ant> generationAnts = new List<Ant>();
+            double totalDist = 0;
 
             for(int i = 0; i < antCount; i++)
             {
@@ -46,40 +64,53 @@ namespace Surprise_Attack_test
                     {
                         ant.hadReachedTarget = true;
                     }
+                    
                 }
                 ant.UpdatePheromone();
+                totalDist += ant.distanceCovered;
             }
 
 
 
+            Console.WriteLine($"Generation sum distance: {totalDist}");
 
 
         }
 
-        
+
         private static Edge CalculateNextMove(Ant ant, TerrainGraph graph)
         {
             double totalHeuristic = CalculateTotalPheromone(ant, graph)/CalculateTotalWeight(ant, graph);
             double currentHeuristic;
             double probability;
-            foreach(Edge edge in graph.terrainGraph[ant.currentPosition])
+            Edge maxEdge = graph.terrainGraph[ant.currentPosition][0];
+            double maxProb = 0;
+            graph.terrainGraph[ant.currentPosition].Shuffle();
+
+            foreach (Edge edge in graph.terrainGraph[ant.currentPosition])
             {
                 if (!ant.nodesVisited.Contains(edge.target))
                 {
                     currentHeuristic = edge.pheromone / edge.weight;
                     probability = currentHeuristic / totalHeuristic;
+                    if(probability > maxProb)
+                    {
+                        maxProb = probability;
+                        maxEdge = edge;
+                    }
 
                     if (ChooseEdge(probability))
                         return edge;
                 }
             }
 
-
-            return CalculateNextMove(ant, graph);
+            
+            return maxEdge;
         }
         private static bool ChooseEdge(double probability)
         {
-            return true;
+            Random rand = new Random();
+            return probability > rand.NextDouble()? true: false;
         }
         private static double CalculateTotalPheromone(Ant ant, TerrainGraph graph)
         {
