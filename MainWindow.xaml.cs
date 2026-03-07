@@ -482,12 +482,13 @@ namespace Surprise_Attack_test
                 for (int i = 0; i < genCount; i++)
                 {
                     this.mapRenderer.DrawTerrain(this.showRestricted);
+                    GenCount_Label.Content = $"Generation Count: {i + 1}";
 
                     genAnts = await Task.Run(() =>
                         Algorithms.RunGenerationACO(Ant.ANT_COUNT_GEN, this.mapRenderer.terrainGraph, this.mapRenderer.terrainMap.startPos, this.mapRenderer.terrainMap.targetPos)
                     );
 
-                    bestAnt = Ant.BestAntInGen(genAnts);
+                    bestAnt = Ant.BestAnt(genAnts);
 
                     this.mapRenderer.DrawPhermones(bestAnt.edgesVisited);
 
@@ -501,19 +502,23 @@ namespace Surprise_Attack_test
             Console.WriteLine($"Best gen: {Algorithms.bestGen}, distance: {Algorithms.bestGenDist}");
             Console.WriteLine($"Difference between best and worst gen: {Algorithms.worstGenDist - Algorithms.bestGenDist}");
 
+           
+            BestAnt_Button.IsEnabled = true;
+
+        }
+        private void BestAnt_Click(Object sender, RoutedEventArgs e)
+        {
+            Ant bestAnt = Ant.BestAnt(Algorithms.allAnts);
+            this.mapRenderer.DrawTerrain(this.showRestricted);
+
+
+            this.mapRenderer.DrawPhermones(bestAnt.edgesVisited);
+
             EnableAllButtons();
             StartSimulation_Button.IsEnabled = true;
-
+            BestAnt_Button.IsEnabled = false;
             Algorithms.ResetParameters();
-        }
-        private void RunGeneration_Click(Object sender, RoutedEventArgs e)
-        {
-            RunGeneration_Button.IsEnabled = false;
-            // run the ACO algorithm!
-            
-            Algorithms.RunGenerationACO(Ant.ANT_COUNT_GEN, this.mapRenderer.terrainGraph, this.mapRenderer.terrainMap.startPos, this.mapRenderer.terrainMap.targetPos);
-            Ant.EvaporatePheromone(this.mapRenderer.terrainGraph);
-            RunGeneration_Button.IsEnabled = true;
+
         }
         private void OverlayCancel_Click(Object sender, RoutedEventArgs e)
         {

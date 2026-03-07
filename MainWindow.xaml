@@ -25,7 +25,7 @@
         <StackPanel Grid.Column="1" Background="BlanchedAlmond">
 
             <Label Content="Settings" FontSize="20" HorizontalAlignment="Center" Margin="0,10,0,0"/>
-            <Label Content="Generation Count: " FontSize="15" HorizontalAlignment="Left" Margin="20,20,10,0" Name="GenCount_Label"/>
+            <Label Content="Generation Count: 0" FontSize="15" HorizontalAlignment="Left" Margin="20,20,10,0" Name="GenCount_Label"/>
             <TextBox x:Name="GenCountBox" Height="25" Width="40" HorizontalAlignment="Left" VerticalContentAlignment="Center" Margin="20,5,15,0" Text="20"/>
             <CheckBox x:Name="chkShowRestricted"  Content="Show Restricted Areas" FontSize="14" Margin="20,10" Checked="RestrictedArea_Checked" Unchecked="RestrictedArea_Unchecked"/>
             <Button Name="AddCamera_Button" Content="Add Camera" Margin="20,20" Height="40" Click="AddCamera_Click"/>
@@ -35,7 +35,7 @@
             <Button Name="StartPos_Button" Content="Choose Starting Position" Margin="20,20" Height="40" Click="StartPos_Click"/>
             <Button Name="TargetPos_Button" Content="Choose Target Position" Margin="20,20" Height="40" Click="TargetPos_Click"/>
             <Button Name="StartSimulation_Button" Content="Start Simulation" Margin="20,20" Height="40" IsEnabled="False" Click="StartSimulation_Click"/>
-            <Button Name="RunGeneration_Button" Content="Run Generation" Margin="20,20" Height="40" IsEnabled="False" Click="RunGeneration_Click"/>
+            <Button Name="BestAnt_Button" Content="Show Best Ant" Margin="20,20" Height="40" IsEnabled="False" Click="BestAnt_Click"/>
 
         </StackPanel>
 

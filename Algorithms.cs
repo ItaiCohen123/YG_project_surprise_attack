@@ -40,6 +40,7 @@ namespace Surprise_Attack_test
         public static int worstGen = 0;
         public static double bestGenDist = Double.MaxValue;
         public static double worstGenDist = 0;
+        public static List<Ant> allAnts = new List<Ant>();
 
 
 
@@ -54,6 +55,7 @@ namespace Surprise_Attack_test
             {
                 Ant currAnt = new Ant(startPos);
                 generationAnts.Add(currAnt);
+                allAnts.Add(currAnt);
 
 
             }
@@ -313,6 +315,7 @@ namespace Surprise_Attack_test
             worstGen = 0;
             bestGenDist = Double.MaxValue;
             worstGenDist = 0;
+            allAnts = new List<Ant>();
         }
 
     }
