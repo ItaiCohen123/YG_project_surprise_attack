@@ -530,7 +530,7 @@ namespace Surprise_Attack_test
             DisableAllButtons();
             StartSimulation_Button.IsEnabled = false;
             FastStartSimulation_Button.IsEnabled = false;
-
+            this.mapRenderer.DrawTerrain(this.showRestricted);
             // builds graph from the terrain height map
             this.mapRenderer.terrainGraph = new TerrainGraph(this.mapRenderer.terrainMap);
             List<Ant> genAnts;
@@ -546,7 +546,13 @@ namespace Surprise_Attack_test
                         Algorithms.RunGenerationACO(Ant.ANT_COUNT_GEN, this.mapRenderer.terrainGraph, this.mapRenderer.terrainMap.startPos, this.mapRenderer.terrainMap.targetPos)
                     );
 
-                    bestAnt = Ant.BestAnt(genAnts);
+                    if (i % (genCount / 5) == 0)
+                    {
+                        this.mapRenderer.DrawTerrain(this.showRestricted);
+                        bestAnt = Ant.BestAnt(Algorithms.allAnts);
+                        this.mapRenderer.DrawPhermones(bestAnt.edgesVisited, false);
+                    }
+
                     Ant.EvaporatePheromone(this.mapRenderer.terrainGraph);
                 }
             }
