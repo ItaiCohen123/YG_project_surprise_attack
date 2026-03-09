@@ -301,6 +301,8 @@ namespace Surprise_Attack_test
         int action;
         bool startPosDecided = false;
         bool targetPosDecided = false;
+        bool SimulationRunning = false;
+        bool endSimulation = false;
        
         bool showRestricted;
         int mountainHeigth;
@@ -487,8 +489,18 @@ namespace Surprise_Attack_test
         }
         private async void StartSimulation_Click(Object sender, RoutedEventArgs e)
         {
+
+            if (this.SimulationRunning)
+            {
+                this.endSimulation = true;
+                return;
+            }
+
+
+
+            this.SimulationRunning = true;
             DisableAllButtons();
-            StartSimulation_Button.IsEnabled = false;
+            StartSimulation_Button.Content = "End Simulation";
             FastStartSimulation_Button.IsEnabled = false;
 
             // builds graph from the terrain height map
@@ -514,6 +526,12 @@ namespace Surprise_Attack_test
                     await Task.Delay(750);
 
                     Ant.EvaporatePheromone(this.mapRenderer.terrainGraph);
+
+                    if(this.endSimulation)
+                    {
+                        this.endSimulation = false;
+                        break;
+                    }
                 }
             }
 
@@ -523,13 +541,27 @@ namespace Surprise_Attack_test
 
            
             BestAnt_Button.IsEnabled = true;
+            this.SimulationRunning = false;
+            StartSimulation_Button.Content = "Start Simulation";
+            StartSimulation_Button.IsEnabled = false;
+
 
         }
+
         private async void FastStartSimulation_Click( object sender, RoutedEventArgs e)
         {
+
+            if (this.SimulationRunning)
+            {
+                this.endSimulation = true;
+                return;
+            }
+
+
+            this.SimulationRunning = true;
             DisableAllButtons();
             StartSimulation_Button.IsEnabled = false;
-            FastStartSimulation_Button.IsEnabled = false;
+            FastStartSimulation_Button.Content = "End Simulation";
             this.mapRenderer.DrawTerrain(this.showRestricted);
             // builds graph from the terrain height map
             this.mapRenderer.terrainGraph = new TerrainGraph(this.mapRenderer.terrainMap);
@@ -554,6 +586,12 @@ namespace Surprise_Attack_test
                     }
 
                     Ant.EvaporatePheromone(this.mapRenderer.terrainGraph);
+
+                    if (this.endSimulation)
+                    {
+                        this.endSimulation = false;
+                        break;
+                    }
                 }
             }
 
@@ -563,6 +601,9 @@ namespace Surprise_Attack_test
 
 
             BestAnt_Button.IsEnabled = true;
+            this.SimulationRunning = false;
+            FastStartSimulation_Button.Content = "Start No Delay Simulation";
+            FastStartSimulation_Button.IsEnabled = false;
 
         }
         private void BestAnt_Click(Object sender, RoutedEventArgs e)

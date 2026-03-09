@@ -38,6 +38,7 @@
             <Button Name="FastStartSimulation_Button" Content="Start No Delay Simulation" Margin="20,20" Height="40" IsEnabled="False" Click="FastStartSimulation_Click"/>
             <Button Name="BestAnt_Button" Content="Show Best Ant" Margin="20,20" Height="40" IsEnabled="False" Click="BestAnt_Click"/>
 
+
         </StackPanel>
 
 

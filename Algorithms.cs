@@ -12,7 +12,7 @@ namespace Surprise_Attack_test
     {
         public static void Shuffle<T>(this List<T> list)
         {
-            Random random = new Random(); // Consider using Random.Shared for thread safety
+            Random random = new Random(); 
             int n = list.Count;
             while (n > 1)
             {
