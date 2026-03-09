@@ -358,6 +358,7 @@ namespace Surprise_Attack_test
         {
             this.mapRenderer.ClearMap();
             StartSimulation_Button.IsEnabled = false;
+            FastStartSimulation_Button.IsEnabled = false;
             this.startPosDecided = false;
             this.targetPosDecided = false;
 
@@ -618,7 +619,10 @@ namespace Surprise_Attack_test
             StartSimulation_Button.IsEnabled = true;
             FastStartSimulation_Button.IsEnabled = true;
             BestAnt_Button.IsEnabled = false;
+            GenCount_Label.Content = "Generation Count: 0";
+
             Algorithms.ResetParameters();
+            
 
         }
         private void OverlayCancel_Click(Object sender, RoutedEventArgs e)
