@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.DirectoryServices.ActiveDirectory;
 using System.Linq;
+using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media;
@@ -17,7 +18,7 @@ namespace Surprise_Attack_test
     {
         public Dictionary<PositionInfo, List<Edge>> terrainGraph;
         public List<Edge> allEdges;
-        public const double PENALTY_VALUE = 400000; // place holder!!!
+        public const double PENALTY_VALUE = 900000; // place holder!!!
         public const double DISTANCE_ADJACENT = 10;
 
         public TerrainGraph(TerrainMap map)
@@ -351,7 +352,7 @@ namespace Surprise_Attack_test
         public double weight;
         public double pheromone;
 
-        public const double INITIAL_PHEROMONE = 0.5; // PLACE HOLDER!!!
+        public const double INITIAL_PHEROMONE = 1.5; // PLACE HOLDER!!!
 
         public Edge(PositionInfo target,PositionInfo from, double weight)
         {
@@ -367,8 +368,10 @@ namespace Surprise_Attack_test
     public class Ant {
 
 
-        public const double PHEROMONE_COEFFICIENT = 50000; // Not the final value
-        public const double PHEROMONE_EVAPORATION_VALUE = 0.8; // Not the final value
+        public const double PHEROMONE_COEFFICIENT = 100000; // Not the final value
+        public const double PHEROMONE_EVAPORATION_VALUE = 0.85; // Not the final value
+        public const double MAX_PHEROMONE_VALUE = 30;
+        public const double MIN_PHEROMONE_VALUE = 1;
         public const int ANT_COUNT_GEN = 13;
 
         public PositionInfo currentPosition;
@@ -406,7 +409,13 @@ namespace Surprise_Attack_test
             foreach(Edge edge in edgesVisited)
             {
                 edge.pheromone += pheromoneIncrease;
+
+                if (edge.pheromone > MAX_PHEROMONE_VALUE)
+                    edge.pheromone = MAX_PHEROMONE_VALUE * 0.9;
+
             }
+
+            
 
 
         }
@@ -419,6 +428,8 @@ namespace Surprise_Attack_test
             foreach(Edge edge in graph.allEdges)
             {
                 edge.pheromone *= PHEROMONE_EVAPORATION_VALUE;
+                if (edge.pheromone < MIN_PHEROMONE_VALUE)
+                    edge.pheromone = MIN_PHEROMONE_VALUE;
             }
 
 
