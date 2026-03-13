@@ -18,7 +18,7 @@ namespace Surprise_Attack_test
     {
         public Dictionary<PositionInfo, List<Edge>> terrainGraph;
         public List<Edge> allEdges;
-        public const double PENALTY_VALUE = 900000; // place holder!!!
+        public const double PENALTY_VALUE = 100000000; // place holder!!!
         public const double DISTANCE_ADJACENT = 10;
 
         public TerrainGraph(TerrainMap map)
@@ -114,9 +114,9 @@ namespace Surprise_Attack_test
         
 
         public const int MOUNTAIN_DEC = 20;
-        public const int MAP_LENGTH = 60; // *** Place holder
-        public const int MAP_WIDTH = 80; // *** Place holder
-        public const int CAMERA_RADIUS = 10;
+        public const int MAP_LENGTH = 50; // *** Place holder
+        public const int MAP_WIDTH = 70; // *** Place holder
+        public const int CAMERA_RADIUS = 7;
         public const int MAX_CAMERA_NUM = MAP_LENGTH * MAP_WIDTH; // *** Place holder
 
         public PositionInfo[,] terrainHeightsMap;
@@ -352,7 +352,7 @@ namespace Surprise_Attack_test
         public double weight;
         public double pheromone;
 
-        public const double INITIAL_PHEROMONE = 1.5; // PLACE HOLDER!!!
+        public const double INITIAL_PHEROMONE = Ant.MAX_PHEROMONE_VALUE * 0.95; // PLACE HOLDER!!!
 
         public Edge(PositionInfo target,PositionInfo from, double weight)
         {
@@ -368,11 +368,11 @@ namespace Surprise_Attack_test
     public class Ant {
 
 
-        public const double PHEROMONE_COEFFICIENT = 100000; // Not the final value
-        public const double PHEROMONE_EVAPORATION_VALUE = 0.85; // Not the final value
-        public const double MAX_PHEROMONE_VALUE = 30;
-        public const double MIN_PHEROMONE_VALUE = 1;
-        public const int ANT_COUNT_GEN = 13;
+        public const double PHEROMONE_COEFFICIENT = 210000; // Not the final value
+        public const double PHEROMONE_EVAPORATION_VALUE = 0.96; // Not the final value
+        public const double MAX_PHEROMONE_VALUE = 40;
+        public const double MIN_PHEROMONE_VALUE = 0.5;
+        public const int ANT_COUNT_GEN = 20;
 
         public PositionInfo currentPosition;
         public bool hadReachedTarget;

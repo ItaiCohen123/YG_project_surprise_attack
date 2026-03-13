@@ -44,11 +44,28 @@ namespace Surprise_Attack_test
 
 
 
+        public static List<Ant> RunSplitGenerationACO(int antCount, TerrainGraph graph, PositionInfo startPos, PositionInfo targetPos)
+        {
 
-        
+            List<Ant> normalGenAnts = RunGenerationACO(antCount/2, graph, startPos, targetPos);
+            List<Ant> reverseGenAnts = RunGenerationACO(antCount/2, graph, targetPos, startPos);
+
+            HandleEndOfGen(graph, normalGenAnts);
+            HandleEndOfGen(graph, reverseGenAnts);
+
+            normalGenAnts.AddRange(reverseGenAnts);
+
+            return normalGenAnts;
+
+
+
+        }
+
+
         public static List<Ant> RunGenerationACO(int antCount, TerrainGraph graph, PositionInfo startPos, PositionInfo targetPos)
         {
             List<Ant> generationAnts = new List<Ant>();
+            
             double totalDist = 0;
 
             for(int i = 0; i < antCount; i++)
@@ -74,14 +91,9 @@ namespace Surprise_Attack_test
                     }
                     
                 }
-                ant.UpdatePheromone();
                 totalDist += ant.distanceCovered;
             }
 
-        
-
-
-            PrintStats(totalDist);
 
 
             return generationAnts;
@@ -143,10 +155,19 @@ namespace Surprise_Attack_test
 
             return totalWeight;
         }
-        private static void PrintStats(double totalDist)
+        private static void HandleEndOfGen(TerrainGraph graph, List<Ant> generationAnts)
+        {
+            Ant bestAntGen;
+            Ant.EvaporatePheromone(graph);
+
+            bestAntGen = Ant.BestAnt(generationAnts);
+
+            bestAntGen.UpdatePheromone();
+
+        }
+        private static void UpdateStats(double totalDist)
         {
 
-            Console.WriteLine($"Generation {Algorithms.genCount} sum distance: {totalDist}");
             if (totalDist < bestGenDist)
             {
                 bestGenDist = totalDist;
@@ -191,6 +212,7 @@ namespace Surprise_Attack_test
         public static TerrainMap ViewshedSingleCam(Camera camera, TerrainMap map)
         {
             int camHeight = map.terrainHeightsMap[camera.row, camera.col].height;
+            map.terrainHeightsMap[camera.row, camera.col].isSafe = false;
 
 
             map = ViewshedSingleDirection(camera.row - 1, camera.col, camHeight, map, UP, Camera.radius);

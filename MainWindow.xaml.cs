@@ -207,9 +207,9 @@ namespace Surprise_Attack_test
             }
             else if(pos.isTargetPos)
             {
-                red = 255;
-                green = (byte)(h / 3);
-                blue = 240;
+                red = 0;
+                green = 0;
+                blue = 0;
             }
 
             BGR[0] = blue;
@@ -517,16 +517,16 @@ namespace Surprise_Attack_test
                     GenCount_Label.Content = $"Generation Count: {i + 1}";
 
                     genAnts = await Task.Run(() =>
-                        Algorithms.RunGenerationACO(Ant.ANT_COUNT_GEN, this.mapRenderer.terrainGraph, this.mapRenderer.terrainMap.startPos, this.mapRenderer.terrainMap.targetPos)
+                        Algorithms.RunSplitGenerationACO(Ant.ANT_COUNT_GEN, this.mapRenderer.terrainGraph, this.mapRenderer.terrainMap.startPos, this.mapRenderer.terrainMap.targetPos)
                     );
 
                     bestAnt = Ant.BestAnt(genAnts);
+
 
                     this.mapRenderer.DrawPhermones(bestAnt.edgesVisited, false);
 
                     await Task.Delay(750);
 
-                    Ant.EvaporatePheromone(this.mapRenderer.terrainGraph);
 
                     if(this.endSimulation)
                     {
@@ -536,9 +536,7 @@ namespace Surprise_Attack_test
                 }
             }
 
-            Console.WriteLine($"Worst gen: {Algorithms.worstGen}, distance: {Algorithms.worstGenDist}");
-            Console.WriteLine($"Best gen: {Algorithms.bestGen}, distance: {Algorithms.bestGenDist}");
-            Console.WriteLine($"Difference between best and worst gen: {Algorithms.worstGenDist - Algorithms.bestGenDist}");
+           
 
            
             BestAnt_Button.IsEnabled = true;
@@ -576,7 +574,7 @@ namespace Surprise_Attack_test
                     GenCount_Label.Content = $"Generation Count: {i + 1}";
 
                     genAnts = await Task.Run(() =>
-                        Algorithms.RunGenerationACO(Ant.ANT_COUNT_GEN, this.mapRenderer.terrainGraph, this.mapRenderer.terrainMap.startPos, this.mapRenderer.terrainMap.targetPos)
+                        Algorithms.RunSplitGenerationACO(Ant.ANT_COUNT_GEN, this.mapRenderer.terrainGraph, this.mapRenderer.terrainMap.startPos, this.mapRenderer.terrainMap.targetPos)
                     );
 
                     if (i % (genCount / 5) == 0)
@@ -586,7 +584,6 @@ namespace Surprise_Attack_test
                         this.mapRenderer.DrawPhermones(bestAnt.edgesVisited, false);
                     }
 
-                    Ant.EvaporatePheromone(this.mapRenderer.terrainGraph);
 
                     if (this.endSimulation)
                     {
@@ -596,11 +593,7 @@ namespace Surprise_Attack_test
                 }
             }
 
-            Console.WriteLine($"Worst gen: {Algorithms.worstGen}, distance: {Algorithms.worstGenDist}");
-            Console.WriteLine($"Best gen: {Algorithms.bestGen}, distance: {Algorithms.bestGenDist}");
-            Console.WriteLine($"Difference between best and worst gen: {Algorithms.worstGenDist - Algorithms.bestGenDist}");
-
-
+           
             BestAnt_Button.IsEnabled = true;
             this.SimulationRunning = false;
             FastStartSimulation_Button.Content = "Start No Delay Simulation";
