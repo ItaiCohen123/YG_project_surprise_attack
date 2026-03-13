@@ -18,7 +18,7 @@ namespace Surprise_Attack_test
     {
         public Dictionary<PositionInfo, List<Edge>> terrainGraph;
         public List<Edge> allEdges;
-        public const double PENALTY_VALUE = 100000000; // place holder!!!
+        public const double PENALTY_VALUE = 150000000; // place holder!!!
         public const double DISTANCE_ADJACENT = 10;
 
         public TerrainGraph(TerrainMap map)

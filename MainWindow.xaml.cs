@@ -90,7 +90,7 @@ namespace Surprise_Attack_test
 
                 foreach (Edge edge in route)
                 {
-                    if (edge.from == this.terrainMap.startPos)
+                    if (edge.from == this.terrainMap.startPos || edge.from == this.terrainMap.targetPos)
                         continue;
 
                     int y = edge.from.yCord;
@@ -231,8 +231,8 @@ namespace Surprise_Attack_test
 
 
             // 1. Define the expected minimum and maximum pheromone levels.
-            double minPheromone = Edge.INITIAL_PHEROMONE; // 0.5 in your code
-            double maxPheromone = 30.0;
+            double minPheromone = Ant.MIN_PHEROMONE_VALUE; 
+            double maxPheromone = Ant.MAX_PHEROMONE_VALUE;
 
             // 2. Normalize the pheromone value to a scale of 0.0 to 1.0
             double range = maxPheromone - minPheromone;
