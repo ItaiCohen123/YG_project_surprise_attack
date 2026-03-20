@@ -50,9 +50,6 @@ namespace Surprise_Attack_test
             List<Ant> normalGenAnts = RunGenerationACO(antCount/2, graph, startPos, targetPos);
             List<Ant> reverseGenAnts = RunGenerationACO(antCount/2, graph, targetPos, startPos);
 
-            HandleEndOfGen(graph, normalGenAnts);
-            HandleEndOfGen(graph, reverseGenAnts);
-
             normalGenAnts.AddRange(reverseGenAnts);
 
             return normalGenAnts;
@@ -60,8 +57,6 @@ namespace Surprise_Attack_test
 
 
         }
-
-
         public static List<Ant> RunGenerationACO(int antCount, TerrainGraph graph, PositionInfo startPos, PositionInfo targetPos)
         {
             List<Ant> generationAnts = new List<Ant>();
@@ -94,7 +89,7 @@ namespace Surprise_Attack_test
                 totalDist += ant.distanceCovered;
             }
 
-
+            HandleEndOfGen(graph, generationAnts);
 
             return generationAnts;
 
@@ -105,14 +100,14 @@ namespace Surprise_Attack_test
             double currentHeuristic;
             double probability;
             Edge maxEdge = graph.terrainGraph[ant.currentPosition][0];
-            double maxProb = 0;
+            double maxProb = -1;
             graph.terrainGraph[ant.currentPosition].Shuffle();
 
             foreach (Edge edge in graph.terrainGraph[ant.currentPosition])
             {
-                if (!ant.nodesVisited.Contains(edge.target))
+                if (!ant.nodesVisited.Contains(edge.target) && edge.target.isSafe == true)
                 {
-                    currentHeuristic = edge.pheromone / edge.weight;
+                    currentHeuristic = edge.pheromone / Math.Sqrt(edge.weight);
                     probability = currentHeuristic / totalHeuristic;
                     if(probability > maxProb)
                     {
@@ -139,7 +134,8 @@ namespace Surprise_Attack_test
 
             foreach(Edge edge in graph.terrainGraph[ant.currentPosition])
             {
-                totalPheromone += edge.pheromone;
+                if (edge.target.isSafe == true)
+                    totalPheromone += edge.pheromone;
             }
 
             return totalPheromone;
@@ -150,7 +146,8 @@ namespace Surprise_Attack_test
 
             foreach (Edge edge in graph.terrainGraph[ant.currentPosition])
             {
-                totalWeight += edge.weight;
+                if(edge.target.isSafe == true)
+                    totalWeight += edge.weight;
             }
 
             return totalWeight;

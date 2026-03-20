@@ -368,11 +368,11 @@ namespace Surprise_Attack_test
     public class Ant {
 
 
-        public const double PHEROMONE_COEFFICIENT = 210000; // Not the final value
+        public const double PHEROMONE_COEFFICIENT = 250000; // Not the final value
         public const double PHEROMONE_EVAPORATION_VALUE = 0.96; // Not the final value
         public const double MAX_PHEROMONE_VALUE = 40;
         public const double MIN_PHEROMONE_VALUE = 0.5;
-        public const int ANT_COUNT_GEN = 20;
+        public const int ANT_COUNT_GEN = 16;
 
         public PositionInfo currentPosition;
         public bool hadReachedTarget;
