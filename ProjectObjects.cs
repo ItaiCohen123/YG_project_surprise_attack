@@ -114,10 +114,10 @@ namespace Surprise_Attack_test
         
 
         public const int MOUNTAIN_DEC = 20;
-        public const int MAP_LENGTH = 50; // *** Place holder
-        public const int MAP_WIDTH = 70; // *** Place holder
+        public static int MAP_LENGTH = 50; // *** Place holder
+        public static int MAP_WIDTH = 70; // *** Place holder
         public const int CAMERA_RADIUS = 7;
-        public const int MAX_CAMERA_NUM = MAP_LENGTH * MAP_WIDTH; // *** Place holder
+        public static int MAX_CAMERA_NUM = MAP_LENGTH * MAP_WIDTH; // *** Place holder
 
         public PositionInfo[,] terrainHeightsMap;
         public Camera[] cameraList;
@@ -136,6 +136,7 @@ namespace Surprise_Attack_test
             this.targetPos = null;
 
         }
+        
         public void AddCamera(int row, int col)
         {   
             Camera newCam = new Camera(row, col);
@@ -345,6 +346,7 @@ namespace Surprise_Attack_test
 
 
     }
+    public record CameraData(int Row, int Col);
     public class Edge
     {
         public PositionInfo target;
@@ -364,13 +366,12 @@ namespace Surprise_Attack_test
         
 
     }
-
     public class Ant {
 
 
         public const double PHEROMONE_COEFFICIENT = 250000; // Not the final value
         public const double PHEROMONE_EVAPORATION_VALUE = 0.96; // Not the final value
-        public const double MAX_PHEROMONE_VALUE = 40;
+        public const double MAX_PHEROMONE_VALUE = 44;
         public const double MIN_PHEROMONE_VALUE = 0.5;
         public const int ANT_COUNT_GEN = 16;
 
@@ -435,6 +436,7 @@ namespace Surprise_Attack_test
 
 
         }
+
         public static Ant BestAnt(List<Ant> ants)
         {
             Ant bestAnt = ants[0];
@@ -455,4 +457,41 @@ namespace Surprise_Attack_test
     
     
     } 
+    public class SaveMapData
+    {
+        public int width;
+        public int length;
+        public PositionInfo[][] mapHeights;
+        public Camera[] cameras;
+        public PositionInfo startPos;
+        public PositionInfo targetPos;
+
+        public SaveMapData(TerrainMap map)
+        {
+            this.width = TerrainMap.MAP_WIDTH;
+            this.length = TerrainMap.MAP_LENGTH;
+            this.startPos = map.startPos;
+            this.targetPos = map.targetPos;
+            this.cameras = map.cameraList;
+            this.mapHeights = new PositionInfo[this.length][];
+
+            for(int row = 0; row < this.length; row++)
+            {
+                this.mapHeights[row] = new PositionInfo[this.width];
+                for(int col = 0; col < this.width; col++)
+                {
+                    this.mapHeights[row][col] = map.terrainHeightsMap[row, col];
+                }
+            }
+
+            
+
+        }
+
+
+
+
+
+    }
+   
 }

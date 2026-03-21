@@ -107,6 +107,7 @@ namespace Surprise_Attack_test
             {
                 if (!ant.nodesVisited.Contains(edge.target) && edge.target.isSafe == true)
                 {
+                    
                     currentHeuristic = edge.pheromone / Math.Sqrt(edge.weight);
                     probability = currentHeuristic / totalHeuristic;
                     if(probability > maxProb)
@@ -116,7 +117,10 @@ namespace Surprise_Attack_test
                     }
 
                     if (ChooseEdge(probability))
+                    {
+                        
                         return edge;
+                    }
                 }
             }
 

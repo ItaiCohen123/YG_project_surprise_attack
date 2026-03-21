@@ -10,6 +10,11 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Media.Media3D;
+using System.Diagnostics.Contracts;
+using System.Reflection;
+using System.IO;
+using System.Text.Json;
+using Microsoft.Win32;
 
 namespace Surprise_Attack_test
 {
@@ -297,6 +302,9 @@ namespace Surprise_Attack_test
         public const int DELETE_CAMERA = 3;
         public const int START_POS = 4;
         public const int TARGET_POS = 5;
+
+        public const int DELAY = 750;
+
         MapRenderer mapRenderer;
         int action;
         bool startPosDecided = false;
@@ -324,6 +332,23 @@ namespace Surprise_Attack_test
             
            
 
+        }
+        private void SaveMap_Click(object sender, EventArgs e)
+        {
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            saveFileDialog.Filter = "JSON Files (*.json)|*.json";
+            saveFileDialog.DefaultExt = ".json";
+
+            if (saveFileDialog.ShowDialog() == true)
+            {
+                //SaveMapData saveMapData = new SaveMapData(this.mapRenderer.terrainMap);
+                var cam = new Camera(5, 6);
+                string jsonString = JsonSerializer.Serialize(cam, new JsonSerializerOptions { WriteIndented = true });
+                File.WriteAllText(saveFileDialog.FileName, jsonString);
+                Console.WriteLine(jsonString);
+
+                MessageBox.Show("Map saved successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
         }
         private void RestrictedArea_Checked(object sender, EventArgs e)
         {
@@ -525,7 +550,7 @@ namespace Surprise_Attack_test
 
                     this.mapRenderer.DrawPhermones(bestAnt.edgesVisited, false);
 
-                    await Task.Delay(750);
+                    await Task.Delay(DELAY);
 
 
                     if(this.endSimulation)
@@ -583,7 +608,6 @@ namespace Surprise_Attack_test
                         bestAnt = Ant.BestAnt(Algorithms.allAnts);
                         this.mapRenderer.DrawPhermones(bestAnt.edgesVisited, false);
                     }
-
 
                     if (this.endSimulation)
                     {
