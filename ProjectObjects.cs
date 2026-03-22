@@ -290,15 +290,15 @@ namespace Surprise_Attack_test
     }
     public class PositionInfo
     {
-        public int height;
-        public int xCord;
-        public int yCord;
-        public int typeOfTerrain;
-        public int lastType;
-        public bool isSafe;
-        public bool isStartingPos;
-        public bool isTargetPos;
-        public Camera cam;
+        public int height {  get; set; }
+        public int xCord {  get; set; }
+        public int yCord {  get; set; }
+        public int typeOfTerrain{  get; set; }
+        public int lastType {  get; set; }
+        public bool isSafe {  get; set; }
+        public bool isStartingPos {get; set; }
+        public bool isTargetPos {get; set; }
+        public Camera cam { get; set; }
 
         public PositionInfo(int y, int x, int height)
         {
@@ -319,8 +319,8 @@ namespace Surprise_Attack_test
     public class Camera
     {
 
-        public int row;
-        public int col;
+        public int row {  get; set; }
+        public int col { get; set; }
         
         public static int radius = TerrainMap.CAMERA_RADIUS; // *** Place holder, check  "future_ideas/מצלמות " for more information
 
@@ -346,7 +346,6 @@ namespace Surprise_Attack_test
 
 
     }
-    public record CameraData(int Row, int Col);
     public class Edge
     {
         public PositionInfo target;
@@ -459,12 +458,12 @@ namespace Surprise_Attack_test
     } 
     public class SaveMapData
     {
-        public int width;
-        public int length;
-        public PositionInfo[][] mapHeights;
-        public Camera[] cameras;
-        public PositionInfo startPos;
-        public PositionInfo targetPos;
+        public int width {  get; set; }
+        public int length {  get; set; }
+        public PositionInfo[][] mapHeights {  get; set; }
+        public Camera[] cameras {  get; set; }
+        public PositionInfo startPos {  get; set; }
+        public PositionInfo targetPos { get; set; }
 
         public SaveMapData(TerrainMap map)
         {

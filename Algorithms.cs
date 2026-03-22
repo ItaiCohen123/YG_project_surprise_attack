@@ -255,41 +255,39 @@ namespace Surprise_Attack_test
             {
 
                 case UP:
-                    map =  ViewshedSingleDirection(row - 1, col, camHeigth, map, direction, distance); break;
+                    map =  ViewshedSingleDirection(row - 1, col, camHeigth, map, direction, distance); return map;
                 case DOWN:
-                    map =  ViewshedSingleDirection(row + 1, col, camHeigth, map, direction, distance); break;
+                    map =  ViewshedSingleDirection(row + 1, col, camHeigth, map, direction, distance); return map;
                 case LEFT:
-                    map =  ViewshedSingleDirection(row, col - 1, camHeigth, map, direction, distance); break;
+                    map =  ViewshedSingleDirection(row, col - 1, camHeigth, map, direction, distance); return map;
                 case RIGHT:
-                    map =  ViewshedSingleDirection(row, col + 1, camHeigth, map, direction, distance); break;
+                    map =  ViewshedSingleDirection(row, col + 1, camHeigth, map, direction, distance); return map;
                 case LEFT_UP:
                     map = ViewshedSingleDirection(row - 1, col - 1, camHeigth, map, direction, distance);
                     if (!CheckVisionBlock(row, col, map, camHeigth, RIGHT))
                         map = ViewshedSingleDirection(row - 1, col, camHeigth, map, UP, distance);
                     if (!CheckVisionBlock(row, col, map, camHeigth, DOWN))
-                        map =  ViewshedSingleDirection(row, col - 1, camHeigth, map, LEFT, distance); break;
+                        map =  ViewshedSingleDirection(row, col - 1, camHeigth, map, LEFT, distance); return map;
                 case RIGHT_UP:
                     map = ViewshedSingleDirection(row - 1, col + 1, camHeigth, map, direction, distance);
                     if (!CheckVisionBlock(row, col, map, camHeigth, LEFT))
                         map = ViewshedSingleDirection(row - 1, col, camHeigth, map, UP, distance);
                     if (!CheckVisionBlock(row, col, map, camHeigth, DOWN))
-                        map =  ViewshedSingleDirection(row, col + 1, camHeigth, map, RIGHT, distance); break;
+                        map =  ViewshedSingleDirection(row, col + 1, camHeigth, map, RIGHT, distance); return map;
                 case RIGHT_DOWN:
                     map = ViewshedSingleDirection(row + 1, col + 1, camHeigth, map, direction, distance);
                     if (!CheckVisionBlock(row, col, map, camHeigth, LEFT))
                         map = ViewshedSingleDirection(row + 1, col, camHeigth, map, DOWN, distance);
                     if(!CheckVisionBlock(row, col, map, camHeigth, UP))
-                        map = ViewshedSingleDirection(row, col + 1, camHeigth, map, RIGHT, distance); break;
+                        map = ViewshedSingleDirection(row, col + 1, camHeigth, map, RIGHT, distance); return map;
                     
                 case LEFT_DOWN:
                     map = ViewshedSingleDirection(row + 1, col - 1, camHeigth, map, direction, distance);
                     if (!CheckVisionBlock(row, col, map, camHeigth, RIGHT))
                         map = ViewshedSingleDirection(row + 1, col, camHeigth, map, DOWN, distance);
                     if (!CheckVisionBlock(row, col, map, camHeigth, UP))
-                        map = ViewshedSingleDirection(row, col - 1, camHeigth, map, LEFT, distance); break;
-                default:
-                    break;
-
+                        map = ViewshedSingleDirection(row, col - 1, camHeigth, map, LEFT, distance); return map;
+               
             }
 
 
@@ -325,10 +323,7 @@ namespace Surprise_Attack_test
                     {
                         return true;
                     }
-                    return false;
-                default:
-                    break;
-
+                    return false;               
             }
 
             return true;

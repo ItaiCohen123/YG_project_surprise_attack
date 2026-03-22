@@ -341,9 +341,9 @@ namespace Surprise_Attack_test
 
             if (saveFileDialog.ShowDialog() == true)
             {
-                //SaveMapData saveMapData = new SaveMapData(this.mapRenderer.terrainMap);
-                var cam = new Camera(5, 6);
-                string jsonString = JsonSerializer.Serialize(cam, new JsonSerializerOptions { WriteIndented = true });
+                SaveMapData saveMapData = new SaveMapData(this.mapRenderer.terrainMap);
+               
+                string jsonString = JsonSerializer.Serialize(saveMapData, new JsonSerializerOptions { WriteIndented = true });
                 File.WriteAllText(saveFileDialog.FileName, jsonString);
                 Console.WriteLine(jsonString);
 
