@@ -350,6 +350,30 @@ namespace Surprise_Attack_test
                 MessageBox.Show("Map saved successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
             }
         }
+        private void LoadMap_Click(Object sender, EventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = "JSON Files (*.json)|*.json";
+
+            if(openFileDialog.ShowDialog() == true)
+            {
+                try
+                {
+                    string jsonData = File.ReadAllText(openFileDialog.FileName);
+                    SaveMapData savedMap = JsonSerializer.Deserialize<SaveMapData>(jsonData,  new JsonSerializerOptions { WriteIndented = true });
+
+                    this.mapRenderer.terrainMap.LoadMap(savedMap);
+                    this.mapRenderer.DrawTerrain(this.showRestricted);
+
+
+
+
+                }
+                catch(Exception ex){
+                    MessageBox.Show("Faild to load map: " + ex.Message);
+                }
+            }
+        }
         private void RestrictedArea_Checked(object sender, EventArgs e)
         {
             this.showRestricted = true;
@@ -371,7 +395,7 @@ namespace Surprise_Attack_test
         }
         private void AddCamera_Click(Object sender, EventArgs e)
         {
-            if (this.mapRenderer.terrainMap.currNumCameras >= TerrainMap.MAX_CAMERA_NUM)
+            if (this.mapRenderer.terrainMap.cameraList.Count >= TerrainMap.MAX_CAMERA_NUM)
                 MessageBox.Show("Reached maximum number of cameras!!!");
             else
             {

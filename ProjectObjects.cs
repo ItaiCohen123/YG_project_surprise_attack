@@ -120,8 +120,7 @@ namespace Surprise_Attack_test
         public static int MAX_CAMERA_NUM = MAP_LENGTH * MAP_WIDTH; // *** Place holder
 
         public PositionInfo[,] terrainHeightsMap;
-        public Camera[] cameraList;
-        public int currNumCameras;
+        public List<Camera> cameraList;
         public PositionInfo startPos;
         public PositionInfo targetPos;
 
@@ -130,56 +129,53 @@ namespace Surprise_Attack_test
         {
 
             this.terrainHeightsMap = new PositionInfo[MAP_LENGTH, MAP_WIDTH];
-            this.cameraList = new Camera[MAX_CAMERA_NUM];
-            this.currNumCameras = 0;
+            this.cameraList = new List<Camera>();
             this.startPos = null;
             this.targetPos = null;
 
         }
-        
+        public void LoadMap(SaveMapData saveMapData)
+        {
+            InitiateFlatMap();
+
+
+            TerrainMap.MAP_WIDTH = saveMapData.width;
+            TerrainMap.MAP_LENGTH = saveMapData.length;
+            this.startPos = saveMapData.startPos;
+            this.targetPos = saveMapData.targetPos;
+            this.cameraList = saveMapData.cameras;
+
+            for (int row = 0; row < TerrainMap.MAP_LENGTH; row++)
+            {
+                for (int col = 0; col < TerrainMap.MAP_WIDTH; col++)
+                {                    
+                    this.terrainHeightsMap[row, col] = saveMapData.mapHeights[row][col];
+                }
+            }
+
+        }
         public void AddCamera(int row, int col)
         {   
             Camera newCam = new Camera(row, col);
-            this.cameraList[this.currNumCameras] = newCam;
-            this.terrainHeightsMap[row, col].lastType = this.terrainHeightsMap[row, col].typeOfTerrain;
-            this.terrainHeightsMap[row, col].typeOfTerrain = CAMERA;
-            this.terrainHeightsMap[row, col].isSafe = false;
-            this.terrainHeightsMap[row, col].cam = newCam;
-
-            this.currNumCameras++;
+           AddCamera(newCam);
 
         }
         public void AddCamera(Camera newCam)
         {
             int row = newCam.row;
             int col = newCam.col;
-            this.cameraList[this.currNumCameras] = newCam;
+            this.cameraList.Add(newCam);
             this.terrainHeightsMap[row, col].lastType = this.terrainHeightsMap[row, col].typeOfTerrain;
             this.terrainHeightsMap[row, col].typeOfTerrain = CAMERA;
             this.terrainHeightsMap[row, col].isSafe = false;
             this.terrainHeightsMap[row, col].cam = newCam;
 
-            this.currNumCameras++;
 
         }
         public void DeleteCamera(Camera camera)
         {
-            Camera[] newCameraList = new Camera[MAX_CAMERA_NUM];
-            int j = 0;
-
-            for(int i = 0; i < this.currNumCameras; i++)
-            {
-
-                if(camera != this.cameraList[i])
-                {
-                    newCameraList[j++] = this.cameraList[i];
-                }
-
-
-            }
-
-            this.currNumCameras--;
-            this.cameraList = newCameraList;
+           
+            this.cameraList.Remove(camera);
 
             this.terrainHeightsMap[camera.row, camera.col].typeOfTerrain = this.terrainHeightsMap[camera.row, camera.col].lastType;
             this.terrainHeightsMap[camera.row, camera.col].cam = null;
@@ -190,7 +186,7 @@ namespace Surprise_Attack_test
         {
             this.startPos = null;
             this.targetPos = null;
-            this.currNumCameras = 0;
+            this.cameraList.Clear();
             for (int row = 0; row < this.terrainHeightsMap.GetLength(0); row++)
             {
                 for (int col = 0; col < this.terrainHeightsMap.GetLength(1); col++)
@@ -312,7 +308,22 @@ namespace Surprise_Attack_test
             this.isTargetPos = false;
             this.cam = null;
         }
+        public PositionInfo(int y, int x, int height, int typeOfTerrain, int lastType, bool isSafe, bool isStartingPos, bool isTargetPos, Camera cam)
+        {
+            this.yCord = y;
+            this.xCord = x;
+            this.height = height;
+            this.typeOfTerrain = typeOfTerrain;
+            this.lastType = lastType;
+            this.isSafe = isSafe;
+            this.isStartingPos = isStartingPos;
+            this.isTargetPos = isTargetPos;
+            this.cam = cam;
+        }
+        public PositionInfo()
+        {
 
+        }
 
 
     }
@@ -461,7 +472,7 @@ namespace Surprise_Attack_test
         public int width {  get; set; }
         public int length {  get; set; }
         public PositionInfo[][] mapHeights {  get; set; }
-        public Camera[] cameras {  get; set; }
+        public List<Camera> cameras {  get; set; }
         public PositionInfo startPos {  get; set; }
         public PositionInfo targetPos { get; set; }
 
@@ -484,6 +495,28 @@ namespace Surprise_Attack_test
             }
 
             
+
+        }
+        public SaveMapData(int width, int length, PositionInfo startPos, PositionInfo targetPos, List<Camera> cameras, PositionInfo[][] mapHeights)
+        {
+            this.width = width;
+            this.length = length;
+            this.startPos = startPos;
+            this.targetPos = targetPos;
+            this.cameras = cameras;
+            this.mapHeights = new PositionInfo[this.length][];
+
+            for (int row = 0; row < this.length; row++)
+            {
+                this.mapHeights[row] = new PositionInfo[this.width];
+                for (int col = 0; col < this.width; col++)
+                {
+                    this.mapHeights[row][col] = mapHeights[row][col];
+                }
+            }
+        }
+        public SaveMapData()
+        {
 
         }
 

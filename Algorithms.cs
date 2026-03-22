@@ -196,7 +196,7 @@ namespace Surprise_Attack_test
             map.ResetMapSafety();
 
 
-            for(int i = 0; i < map.currNumCameras; i++)
+            for(int i = 0; i < map.cameraList.Count; i++)
             {
                 map = ViewshedSingleCam(map.cameraList[i], map); // returns global map + the new not safe places by the latest camera
 
