@@ -141,8 +141,7 @@ namespace Surprise_Attack_test
 
             TerrainMap.MAP_WIDTH = saveMapData.width;
             TerrainMap.MAP_LENGTH = saveMapData.length;
-            this.startPos = saveMapData.startPos;
-            this.targetPos = saveMapData.targetPos;
+            
             this.cameraList = saveMapData.cameras;
 
             for (int row = 0; row < TerrainMap.MAP_LENGTH; row++)
@@ -152,6 +151,9 @@ namespace Surprise_Attack_test
                     this.terrainHeightsMap[row, col] = saveMapData.mapHeights[row][col];
                 }
             }
+
+            this.startPos = this.terrainHeightsMap[saveMapData.startPos.yCord, saveMapData.startPos.xCord];
+            this.targetPos = this.terrainHeightsMap[saveMapData.targetPos.yCord, saveMapData.targetPos.xCord];
 
         }
         public void AddCamera(int row, int col)

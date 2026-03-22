@@ -373,6 +373,15 @@ namespace Surprise_Attack_test
                     MessageBox.Show("Faild to load map: " + ex.Message);
                 }
             }
+            this.startPosDecided = this.mapRenderer.terrainMap.startPos != null;
+            this.targetPosDecided = this.mapRenderer.terrainMap.targetPos != null;
+
+            if(this.startPosDecided && this.targetPosDecided)
+            {
+                StartSimulation_Button.IsEnabled = true;
+                FastStartSimulation_Button.IsEnabled = true;
+            }
+
         }
         private void RestrictedArea_Checked(object sender, EventArgs e)
         {
@@ -703,6 +712,8 @@ namespace Surprise_Attack_test
             StartPos_Button.IsEnabled = false;
             TargetPos_Button.IsEnabled = false;
             GenCountBox.IsEnabled = false;
+            SaveMap_Button.IsEnabled = false;
+            LoadMap_Button.IsEnabled = false;
             
         }
         private void EnableAllButtons()
@@ -715,6 +726,8 @@ namespace Surprise_Attack_test
             StartPos_Button.IsEnabled = true;
             TargetPos_Button.IsEnabled = true;
             GenCountBox.IsEnabled = true;
+            SaveMap_Button.IsEnabled = true;
+            LoadMap_Button.IsEnabled = true;
         }
        
     }
