@@ -15,10 +15,15 @@ using System.Windows.Shapes;
 namespace Surprise_Attack_test
 {
     /// <summary>
-    /// Interaction logic for ChartWindow.xaml
+    /// Interaction logic for ChartWindow.xaml.
+    /// Represents the secondary window that displays the algorithm's convergence chart.
     /// </summary>
     public partial class ChartWindow : Window
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ChartWindow"/> class.
+        /// </summary>
+        /// <param name="chartData">The dynamic chart data object containing the algorithm's convergence history.</param>
         public ChartWindow(DynamicChart chartData)
         {
             InitializeComponent();
