@@ -5,79 +5,173 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Surprise_Attack_test"
         mc:Ignorable="d" 
-        Title="Suprise Attack" Height="811" Width="1390">
+        Title="Suprise Attack - Simulator" Height="811" Width="1390"
+        Background="#E8ECEF">
+
+    <Window.Resources>
+        <Style TargetType="Button">
+            <Setter Property="Background" Value="#E2E8F0"/>
+            <Setter Property="Foreground" Value="#2D3748"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="10,5"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="6" BorderBrush="#CBD5E0" BorderThickness="1">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#CBD5E0"/>
+                </Trigger>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Opacity" Value="0.5"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+
     <Grid>
-
         <Grid.ColumnDefinitions>
-
-            <ColumnDefinition Width="4*" />
-            <ColumnDefinition Width="250"/>
-
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="330"/>
         </Grid.ColumnDefinitions>
 
-        <Image x:Name="MapImage"
-               Grid.Column="0"
-               Stretch="Uniform"           
-               RenderOptions.BitmapScalingMode="NearestNeighbor"
-               MouseLeftButtonDown="MapImage_MouseLeftButtonDown"
-               />
-
-        <StackPanel Grid.Column="1" Background="BlanchedAlmond">
-
-            <Label Content="Settings" FontSize="20" HorizontalAlignment="Center" Margin="0,10,0,0"/>
-            <Button Name="SaveMap_Button" Content="Save Map" Margin="20,10" Height="20" Width="65" Click="SaveMap_Click" HorizontalAlignment="Left"/>
-            <Button Name="LoadMap_Button" Content="Load Map" Margin="20,5" Height="20" Width="65" Click="LoadMap_Click" HorizontalAlignment="Left"/>
-            <Label Content="Generation Count: 0" FontSize="15" HorizontalAlignment="Left" Margin="20,20,10,0" Name="GenCount_Label"/>
-            <TextBox x:Name="GenCountBox" Height="25" Width="40" HorizontalAlignment="Left" VerticalContentAlignment="Center" Margin="20,5,15,0" Text="20"/>
-            <CheckBox x:Name="chkShowRestricted"  Content="Show Restricted Areas" FontSize="14" Margin="20,10" Checked="RestrictedArea_Checked" Unchecked="RestrictedArea_Unchecked"/>
-            <Button Name="AddCamera_Button" Content="Add Camera" Margin="20,20" Height="40" Click="AddCamera_Click"/>
-            <Button Name="DeleteCamera_Button" Content="Delete Camera" Margin="20,20" Height="40" Click="DeleteCamera_Click"/>
-            <Button Name="AddMountain_Button" Content="Add Mountain" Margin="20,20" Height="40" Click="AddMountain_Click"/>
-            <Button Name="ClearMap_Button" Content="Clear Map" Margin="20,20" Height="40" Click="ClearMap_Click"/>
-            <Button Name="StartPos_Button" Content="Choose Starting Position" Margin="20,20" Height="40" Click="StartPos_Click"/>
-            <Button Name="TargetPos_Button" Content="Choose Target Position" Margin="20,20" Height="40" Click="TargetPos_Click"/>
-            <Button Name="StartSimulation_Button" Content="Start Simulation" Margin="20,20" Height="40" IsEnabled="False" Click="StartSimulation_Click"/>
-            <Button Name="FastStartSimulation_Button" Content="Start No Delay Simulation" Margin="20,20" Height="40" IsEnabled="False" Click="FastStartSimulation_Click"/>
-            <Button Name="BestAnt_Button" Content="Show Best Ant" Margin="20,20" Height="40" IsEnabled="False" Click="BestAnt_Click"/>
-
-
-        </StackPanel>
-
-
-        <Border Name="MountainInputOverlay" Background="White" Width="300" Height="250" CornerRadius="10" BorderBrush="Gray" BorderThickness="1">
-
+        <Border Grid.Column="0" Margin="15" CornerRadius="10" Background="Black" ClipToBounds="True">
             <Border.Effect>
-                <DropShadowEffect BlurRadius="20" ShadowDepth="0" Opacity="0.5"/>
+                <DropShadowEffect BlurRadius="15" ShadowDepth="5" Opacity="0.3"/>
+            </Border.Effect>
+            <Image x:Name="MapImage"
+                   Stretch="Uniform"           
+                   RenderOptions.BitmapScalingMode="NearestNeighbor"
+                   MouseLeftButtonDown="MapImage_MouseLeftButtonDown"/>
+        </Border>
+
+        <Border Grid.Column="1" Background="#F7FAFC" BorderBrush="#E2E8F0" BorderThickness="1,0,0,0">
+            <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="15">
+                <StackPanel>
+
+                    <TextBlock Text="Control Panel" FontSize="24" FontWeight="Bold" Foreground="#2D3748" HorizontalAlignment="Center" Margin="0,0,0,20"/>
+
+                    <Border Background="White" CornerRadius="8" Padding="15" Margin="0,0,0,15">
+                        <Border.Effect>
+                            <DropShadowEffect BlurRadius="10" ShadowDepth="2" Opacity="0.1"/>
+                        </Border.Effect>
+                        <StackPanel>
+                            <TextBlock Text="Map Management" FontWeight="Bold" Foreground="#4A5568" Margin="0,0,0,10"/>
+                            <UniformGrid Columns="3" HorizontalAlignment="Stretch">
+                                <Button Name="SaveMap_Button" Content="Save" Margin="0,0,5,0" Height="30" Click="SaveMap_Click"/>
+                                <Button Name="LoadMap_Button" Content="Load" Margin="5,0,5,0" Height="30" Click="LoadMap_Click"/>
+                                <Button Name="ClearMap_Button" Content="Clear" Margin="5,0,0,0" Height="30" Click="ClearMap_Click" Foreground="#E53E3E"/>
+                            </UniformGrid>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Background="White" CornerRadius="8" Padding="15" Margin="0,0,0,15">
+                        <Border.Effect>
+                            <DropShadowEffect BlurRadius="10" ShadowDepth="2" Opacity="0.1"/>
+                        </Border.Effect>
+                        <StackPanel>
+                            <TextBlock Text="Environment Tools" FontWeight="Bold" Foreground="#4A5568" Margin="0,0,0,10"/>
+
+                            <UniformGrid Columns="2" Rows="3" HorizontalAlignment="Stretch">
+                                <Button Name="StartPos_Button" Content="Set Start" Margin="0,0,5,10" Height="35" Click="StartPos_Click" Background="#C6F6D5"/>
+                                <Button Name="TargetPos_Button" Content="Set Target" Margin="5,0,0,10" Height="35" Click="TargetPos_Click" Background="#FED7D7"/>
+
+                                <Button Name="AddMountain_Button" Content="Add Mountain" Margin="0,0,5,10" Height="35" Click="AddMountain_Click"/>
+                                <Button Name="AddCamera_Button" Content="Add Camera" Margin="5,0,0,10" Height="35" Click="AddCamera_Click"/>
+
+                                <Button Name="DeleteCamera_Button" Content="Delete Camera" Margin="0,0,5,0" Height="35" Click="DeleteCamera_Click"/>
+                            </UniformGrid>
+
+                            <CheckBox x:Name="chkShowRestricted" Content="Show Restricted Areas" FontSize="14" FontWeight="SemiBold" Foreground="#E53E3E" Margin="0,15,0,0" Checked="RestrictedArea_Checked" Unchecked="RestrictedArea_Unchecked"/>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Background="White" CornerRadius="8" Padding="15" Margin="0,0,0,15">
+                        <Border.Effect>
+                            <DropShadowEffect BlurRadius="10" ShadowDepth="2" Opacity="0.1"/>
+                        </Border.Effect>
+                        <StackPanel>
+                            <TextBlock Text="Simulation Settings" FontWeight="Bold" Foreground="#4A5568" Margin="0,0,0,10"/>
+
+                            <Grid Margin="0,5,0,10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="Total Generations:" VerticalAlignment="Center" FontSize="14" FontWeight="SemiBold" Foreground="#4A5568" Margin="0,0,10,0"/>
+                                <TextBox x:Name="GenCountBox" Grid.Column="1" Text="20" Height="28" FontSize="14" FontWeight="Bold" TextAlignment="Center" VerticalContentAlignment="Center"/>
+                            </Grid>
+
+                            <Label Name="GenCount_Label" Content="Current Generation: 0" FontSize="14" Foreground="#718096" HorizontalAlignment="Left" Padding="0"/>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Background="White" CornerRadius="8" Padding="15" Margin="0,0,0,15">
+                        <Border.Effect>
+                            <DropShadowEffect BlurRadius="10" ShadowDepth="2" Opacity="0.1"/>
+                        </Border.Effect>
+                        <StackPanel>
+                            <TextBlock Text="Execution" FontWeight="Bold" Foreground="#4A5568" Margin="0,0,0,10"/>
+
+                            <Button Name="StartSimulation_Button" Content="▶ Start Simulation" Height="40" Background="#3182CE" Foreground="White" FontSize="15" Margin="0,0,0,10" IsEnabled="False" Click="StartSimulation_Click"/>
+                            <Button Name="FastStartSimulation_Button" Content="⏩ Fast Start (No Delay)" Height="35" Background="#2B6CB0" Foreground="White" Margin="0,0,0,10" IsEnabled="False" Click="FastStartSimulation_Click"/>
+                            <Button Name="BestAnt_Button" Content="⭐ Show Best Ant" Height="35" Background="#D69E2E" Foreground="White" IsEnabled="False" Click="BestAnt_Click"/>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Background="White" CornerRadius="8" Padding="15" MinHeight="180">
+                        <Border.Effect>
+                            <DropShadowEffect BlurRadius="10" ShadowDepth="2" Opacity="0.1"/>
+                        </Border.Effect>
+                        <Grid>
+                            <TextBlock Text="📈 Convergence Chart&#x0a;[Coming Soon]" TextAlignment="Center" VerticalAlignment="Center" FontSize="16" Foreground="#A0AEC0" FontWeight="SemiBold"/>
+
+                            <ContentControl x:Name="ChartContainer" />
+                        </Grid>
+                    </Border>
+
+                </StackPanel>
+            </ScrollViewer>
+        </Border>
+
+        <Border Name="MountainInputOverlay" Background="White" Width="280" Height="220" CornerRadius="12" BorderBrush="#E2E8F0" BorderThickness="1" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <Border.Effect>
+                <DropShadowEffect BlurRadius="25" ShadowDepth="5" Opacity="0.4"/>
             </Border.Effect>
 
             <StackPanel Margin="20" VerticalAlignment="Center">
-                <TextBlock Text="Add Mountain" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,0,0,15"/>
+                <TextBlock Text="Mountain Settings" FontSize="18" FontWeight="Bold" Foreground="#2D3748" HorizontalAlignment="Center" Margin="0,0,0,20"/>
 
-                <Grid Margin="0,5">
+                <Grid Margin="0,5,0,10">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="70"/>
+                        <ColumnDefinition Width="80"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
-                    <Label Grid.Column="0" Content="Radius:"/>
-                    <TextBox Grid.Column="1" x:Name="txtOverlayRadius" Height="25" VerticalContentAlignment="Center" Text="6"/>
+                    <Label Grid.Column="0" Content="Radius:" FontWeight="SemiBold"/>
+                    <TextBox Grid.Column="1" x:Name="txtOverlayRadius" Height="28" VerticalContentAlignment="Center" TextAlignment="Center" Text="6"/>
                 </Grid>
 
-                <Grid Margin="0,5">
+                <Grid Margin="0,5,0,20">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="70"/>
+                        <ColumnDefinition Width="80"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
-                    <Label Grid.Column="0" Content="Height:"/>
-                    <TextBox Grid.Column="1" x:Name="txtOverlayHeight" Height="25" VerticalContentAlignment="Center" Text="220"/>
+                    <Label Grid.Column="0" Content="Height:" FontWeight="SemiBold"/>
+                    <TextBox Grid.Column="1" x:Name="txtOverlayHeight" Height="28" VerticalContentAlignment="Center" TextAlignment="Center" Text="220"/>
                 </Grid>
 
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,0">
-                    <Button Content="Cancel" Width="70" Height="25" Margin="0,0,10,0" Click="OverlayCancel_Click"/>
-                    <Button Content="Confirm" Width="70" Height="25" FontWeight="Bold" Background="#DDFFDD" Click="OverlayConfirm_Click"/>
-                </StackPanel>
+                <UniformGrid Columns="2" HorizontalAlignment="Stretch">
+                    <Button Content="Cancel" Height="32" Margin="0,0,5,0" Click="OverlayCancel_Click"/>
+                    <Button Content="Confirm" Height="32" Margin="5,0,0,0" Background="#48BB78" Foreground="White" Click="OverlayConfirm_Click"/>
+                </UniformGrid>
             </StackPanel>
         </Border>
     </Grid>
-    
-    
 </Window>
