@@ -127,29 +127,20 @@
                         </StackPanel>
                     </Border>
 
-                    <Border Background="White" CornerRadius="8" Padding="15" MinHeight="250">
+                    <Border Background="White" CornerRadius="8" Padding="15" Margin="0,0,0,15">
                         <Border.Effect>
                             <DropShadowEffect BlurRadius="10" ShadowDepth="2" Opacity="0.1"/>
                         </Border.Effect>
-                        <Grid>
-                            <lvc:CartesianChart x:Name="ConvergenceGraphUI" 
-                    Series="{Binding SeriesCollection}" 
-                    Zoom="X" 
-                    Pan="X" 
-                    Background="Transparent">
-                                <lvc:CartesianChart.AxisX>
-                                    <lvc:Axis Title="Generation" MinValue="1">
-                                        <lvc:Axis.Separator>
-                                            <lvc:Separator Step="10" />
-                                        </lvc:Axis.Separator>
-                                    </lvc:Axis>
-                                </lvc:CartesianChart.AxisX>
-                                <lvc:CartesianChart.AxisY>
-                                    <lvc:Axis Title="Best Distance" LabelFormatter="{Binding YFormatter}"/>
-                                </lvc:CartesianChart.AxisY>
-                            </lvc:CartesianChart>
-                            <ContentControl x:Name="ChartContainer" />
-                        </Grid>
+                        <StackPanel>
+                            <TextBlock Text="Analytics" FontWeight="Bold" Foreground="#4A5568" Margin="0,0,0,10"/>
+
+                            <Button x:Name="OpenChart_Button" Height="60" Background="#EBF4FF" BorderBrush="#3182CE" BorderThickness="1" Click="OpenChart_Click">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="📈" FontSize="24" Margin="0,0,10,0" VerticalAlignment="Center"/>
+                                    <TextBlock Text="Open Convergence Chart" FontSize="16" FontWeight="SemiBold" Foreground="#2B6CB0" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </Button>
+                        </StackPanel>
                     </Border>
 
                 </StackPanel>
