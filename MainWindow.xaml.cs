@@ -304,8 +304,10 @@ namespace Surprise_Attack_test
         public const int TARGET_POS = 5;
 
         public const int DELAY = 750;
+        public const int PRINT_PATH_COUNT = 10;
 
         MapRenderer mapRenderer;
+        DynamicChart chart;
         int action;
         bool startPosDecided = false;
         bool targetPosDecided = false;
@@ -319,18 +321,17 @@ namespace Surprise_Attack_test
         public MainWindow()
         {
             InitializeComponent();
+
+            chart = new DynamicChart();
+            ConvergenceGraphUI.DataContext = chart;
+
             MountainInputOverlay.Visibility = Visibility.Collapsed;
             this.mountainHeigth = 0;
             this.mountainRadius = 0;
             this.action = NOTHING;
             this.showRestricted = false;
            
-
             this.mapRenderer = new MapRenderer(MapImage);
-           
-
-            
-           
 
         }
         private void SaveMap_Click(object sender, EventArgs e)
@@ -582,6 +583,7 @@ namespace Surprise_Attack_test
 
 
                     this.mapRenderer.DrawPhermones(bestAnt.edgesVisited, false);
+                    this.chart.AddGenToChart(bestAnt.distanceCovered);
 
                     await Task.Delay(DELAY);
 
@@ -624,6 +626,7 @@ namespace Surprise_Attack_test
             this.mapRenderer.terrainGraph = new TerrainGraph(this.mapRenderer.terrainMap);
             List<Ant> genAnts;
             Ant bestAnt;
+            Ant genBestAnt;
 
             if (int.TryParse(GenCountBox.Text, out int genCount))
             {
@@ -635,12 +638,15 @@ namespace Surprise_Attack_test
                         Algorithms.RunSplitGenerationACO(Ant.ANT_COUNT_GEN, this.mapRenderer.terrainGraph, this.mapRenderer.terrainMap.startPos, this.mapRenderer.terrainMap.targetPos)
                     );
 
-                    if (i % (genCount / 5) == 0)
+                    if (i % (genCount / PRINT_PATH_COUNT) == 0)
                     {
                         this.mapRenderer.DrawTerrain(this.showRestricted);
                         bestAnt = Ant.BestAnt(Algorithms.allAnts);
                         this.mapRenderer.DrawPhermones(bestAnt.edgesVisited, false);
                     }
+
+                    genBestAnt = Ant.BestAnt(genAnts);
+                    this.chart.AddGenToChart(genBestAnt.distanceCovered);
 
                     if (this.endSimulation)
                     {
@@ -672,6 +678,7 @@ namespace Surprise_Attack_test
             GenCount_Label.Content = "Generation Count: 0";
 
             Algorithms.ResetParameters();
+            this.chart.ClearChart();
             
 
         }

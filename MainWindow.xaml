@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Surprise_Attack_test"
+        xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"      
         mc:Ignorable="d" 
         Title="Suprise Attack - Simulator" Height="811" Width="1390"
         Background="#E8ECEF">
@@ -126,13 +127,27 @@
                         </StackPanel>
                     </Border>
 
-                    <Border Background="White" CornerRadius="8" Padding="15" MinHeight="180">
+                    <Border Background="White" CornerRadius="8" Padding="15" MinHeight="250">
                         <Border.Effect>
                             <DropShadowEffect BlurRadius="10" ShadowDepth="2" Opacity="0.1"/>
                         </Border.Effect>
                         <Grid>
-                            <TextBlock Text="📈 Convergence Chart&#x0a;[Coming Soon]" TextAlignment="Center" VerticalAlignment="Center" FontSize="16" Foreground="#A0AEC0" FontWeight="SemiBold"/>
-
+                            <lvc:CartesianChart x:Name="ConvergenceGraphUI" 
+                    Series="{Binding SeriesCollection}" 
+                    Zoom="X" 
+                    Pan="X" 
+                    Background="Transparent">
+                                <lvc:CartesianChart.AxisX>
+                                    <lvc:Axis Title="Generation" MinValue="1">
+                                        <lvc:Axis.Separator>
+                                            <lvc:Separator Step="10" />
+                                        </lvc:Axis.Separator>
+                                    </lvc:Axis>
+                                </lvc:CartesianChart.AxisX>
+                                <lvc:CartesianChart.AxisY>
+                                    <lvc:Axis Title="Best Distance" LabelFormatter="{Binding YFormatter}"/>
+                                </lvc:CartesianChart.AxisY>
+                            </lvc:CartesianChart>
                             <ContentControl x:Name="ChartContainer" />
                         </Grid>
                     </Border>
