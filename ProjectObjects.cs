@@ -573,11 +573,11 @@ namespace Surprise_Attack_test
         /// <summary>Multiplier used when updating pheromones based on the ant's performance.</summary>
         public const double PHEROMONE_COEFFICIENT = 250000; // Not the final value
         /// <summary>The rate at which pheromones decay on edges after every generation.</summary>
-        public const double PHEROMONE_EVAPORATION_VALUE = 0.96; // Not the final value
+        public const double PHEROMONE_EVAPORATION_VALUE = 0.92; // Not the final value
         /// <summary>The maximum allowed limit for pheromones on any single edge.</summary>
-        public const double MAX_PHEROMONE_VALUE = 44;
+        public const double MAX_PHEROMONE_VALUE = 50;
         /// <summary>The minimum allowed threshold for pheromones to prevent paths from becoming completely ignored.</summary>
-        public const double MIN_PHEROMONE_VALUE = 0.5;
+        public const double MIN_PHEROMONE_VALUE = 1.5;
         /// <summary>The number of ants spawned per standard generation.</summary>
         public const int ANT_COUNT_GEN = 16;
 
@@ -626,21 +626,42 @@ namespace Surprise_Attack_test
         /// </summary>
         // Iterates through the entire edge route an ant that reached the target took
         // and adds pheromones according the quality of the route.
-        public void UpdatePheromone()
+        public void UpdatePheromone(TerrainGraph graph)
         {
 
             double pheromoneIncrease = PHEROMONE_COEFFICIENT / this.distanceCovered;
 
-            foreach (Edge edge in edgesVisited)
+           
+
+            for(int edge = 0; edge <  this.edgesVisited.Count; edge++)
             {
-                edge.pheromone += pheromoneIncrease;
-
-                if (edge.pheromone > MAX_PHEROMONE_VALUE)
-                    edge.pheromone = MAX_PHEROMONE_VALUE * 0.9;
-
+                edge = AddPheromoneToFarthestsEdge(edgesVisited[edge], edge, graph, pheromoneIncrease);
             }
 
 
+
+
+        }
+        private int AddPheromoneToFarthestsEdge(Edge edge, int index, TerrainGraph graph, double pheromoneIncrease)
+        {
+            PositionInfo from = edge.from;
+            
+            for(int edgeI = edgesVisited.Count - 1; edgeI >= 0; edgeI--)
+            {
+                foreach(Edge e in graph.terrainGraph[from])
+                {
+                    if(e.target == this.edgesVisited[edgeI].target)
+                    {
+                        e.pheromone += pheromoneIncrease;
+
+                        if (e.pheromone > MAX_PHEROMONE_VALUE)
+                            e.pheromone = MAX_PHEROMONE_VALUE * 0.9;
+                        return edgeI;
+                    }
+                }
+            }
+
+            return index;
 
 
         }

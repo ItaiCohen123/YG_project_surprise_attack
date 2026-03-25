@@ -242,7 +242,7 @@ namespace Surprise_Attack_test
 
             bestAntGen = Ant.BestAnt(generationAnts);
 
-            bestAntGen.UpdatePheromone();
+            bestAntGen.UpdatePheromone(graph);
 
         }
 
