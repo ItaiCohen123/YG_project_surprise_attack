@@ -152,7 +152,7 @@ namespace Surprise_Attack_test
             double totalHeuristic = CalculateTotalPheromone(ant, graph) / Math.Sqrt(CalculateTotalWeight(ant, graph));
             double currentHeuristic;
             double probability;
-            Edge maxEdge = graph.terrainGraph[ant.currentPosition][0];
+            Edge maxEdge = null;
             Edge edgePicked = null;
             bool foundEdge = false;
             double maxProb = -1;
@@ -178,8 +178,20 @@ namespace Surprise_Attack_test
                     }
                 }
             }
+            // In case of a dead end and needing to turn around.
+            if (maxEdge == null)
+            {
+                foreach (Edge edge in graph.terrainGraph[ant.currentPosition])
+                {
+                    if (edge.target.isSafe == true)
+                    {
+                        return edge; 
+                    }
+                }
 
-            // Check if need to pick best edge according to q0
+                return graph.terrainGraph[ant.currentPosition][0]; // Extreme edge case
+            }
+           // Check if need to pick best edge according to q0
             if (ChooseEdge(Ant.Q0_BEST_EDGE_PROB))
                 return maxEdge;
 
