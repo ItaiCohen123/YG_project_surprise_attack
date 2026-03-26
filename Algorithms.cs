@@ -153,6 +153,8 @@ namespace Surprise_Attack_test
             double currentHeuristic;
             double probability;
             Edge maxEdge = graph.terrainGraph[ant.currentPosition][0];
+            Edge edgePicked = null;
+            bool foundEdge = false;
             double maxProb = -1;
             graph.terrainGraph[ant.currentPosition].Shuffle();
 
@@ -169,14 +171,20 @@ namespace Surprise_Attack_test
                         maxEdge = edge;
                     }
 
-                    if (ChooseEdge(probability))
+                    if (!foundEdge && ChooseEdge(probability))
                     {
-
-                        return edge;
+                        foundEdge = true;
+                        edgePicked = edge;
                     }
                 }
             }
 
+            // Check if need to pick best edge according to q0
+            if (ChooseEdge(Ant.Q0_BEST_EDGE_PROB))
+                return maxEdge;
+
+            if (edgePicked != null)
+                return edgePicked;
 
             return maxEdge;
         }

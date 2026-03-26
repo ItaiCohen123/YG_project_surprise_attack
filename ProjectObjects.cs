@@ -580,6 +580,9 @@ namespace Surprise_Attack_test
         public const double MIN_PHEROMONE_VALUE = 1.5;
         /// <summary>The number of ants spawned per standard generation.</summary>
         public const int ANT_COUNT_GEN = 16;
+        /// <summary>Probability to pick the best edge.</summary>
+        public const double Q0_BEST_EDGE_PROB = 0.7;
+
 
         /// <summary>The current active position of the ant in the graph.</summary>
         public PositionInfo currentPosition;
