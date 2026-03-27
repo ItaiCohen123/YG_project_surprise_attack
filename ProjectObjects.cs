@@ -213,6 +213,11 @@ namespace Surprise_Attack_test
             this.startPos = this.terrainHeightsMap[saveMapData.startPos.yCord, saveMapData.startPos.xCord];
             this.targetPos = this.terrainHeightsMap[saveMapData.targetPos.yCord, saveMapData.targetPos.xCord];
 
+            foreach(Camera camera in this.cameraList)
+            {
+                this.terrainHeightsMap[camera.row, camera.col].cam = camera;
+            }
+
         }
 
         /// <summary>
